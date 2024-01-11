@@ -1,0 +1,1247 @@
+gplink-1.4.0 #1107 (Jan  1 2021)
+Copyright (c) 1998-2014 gputils project
+Listing File Generated: 1-10-2024  20:44:42
+ 
+ 
+Address  Value    Disassembly              Source
+-------  -----    -----------              ------
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 4.0.0 #11528 (Linux)
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.file	"Tombola.c"
+                                           	list	p=12f683
+                                           	radix dec
+                                           	include "p12f683.inc"
+                                                   LIST
+                                           
+                                           ;==========================================================================
+                                           ; Build date : Aug 07 2014
+                                           ;  MPASM PIC12F683 processor include
+                                           ; 
+                                           ;  (c) Copyright 1999-2014 Microchip Technology, All rights reserved
+                                           ;==========================================================================
+                                           
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; config word(s)
+                                           ;--------------------------------------------------------
+002007   3fd7     addlw   0xd7             	__config 0x3fd7
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	__moduint
+                                           	extern	__divuint
+                                           	extern	__muluschar
+                                           	extern	__mulint
+                                           	extern	_TRISIO
+                                           	extern	_GPIO
+                                           	extern	_GPIObits
+                                           	extern	__gptrget2
+                                           	extern	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_main
+                                           	global	_random
+                                           	global	_print
+                                           	global	_delay
+                                           	global	_isNumberInArray
+                                           
+                                           	global PSAVE
+                                           	global SSAVE
+                                           	global WSAVE
+                                           	global STK12
+                                           	global STK11
+                                           	global STK10
+                                           	global STK09
+                                           	global STK08
+                                           	global STK07
+                                           	global STK06
+                                           	global STK05
+                                           	global STK04
+                                           	global STK03
+                                           	global STK02
+                                           	global STK01
+                                           	global STK00
+                                           
+                                           sharebank udata_ovr 0x0070
+                                           PSAVE	res 1
+                                           SSAVE	res 1
+                                           WSAVE	res 1
+                                           STK12	res 1
+                                           STK11	res 1
+                                           STK10	res 1
+                                           STK09	res 1
+                                           STK08	res 1
+                                           STK07	res 1
+                                           STK06	res 1
+                                           STK05	res 1
+                                           STK04	res 1
+                                           STK03	res 1
+                                           STK02	res 1
+                                           STK01	res 1
+                                           STK00	res 1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_Tombola_0	udata
+                                           r0x1026	res	1
+                                           r0x1027	res	1
+                                           r0x1029	res	1
+                                           r0x1028	res	1
+                                           r0x102B	res	1
+                                           r0x102A	res	1
+                                           r0x102D	res	1
+                                           r0x102C	res	1
+                                           r0x102F	res	1
+                                           r0x102E	res	1
+                                           r0x1031	res	1
+                                           r0x1032	res	1
+                                           r0x1021	res	1
+                                           r0x1020	res	1
+                                           r0x1023	res	1
+                                           r0x1022	res	1
+                                           r0x1025	res	1
+                                           r0x1024	res	1
+                                           r0x101D	res	1
+                                           r0x101C	res	1
+                                           r0x101E	res	1
+                                           r0x1015	res	1
+                                           r0x1014	res	1
+                                           r0x1016	res	1
+                                           r0x1017	res	1
+                                           r0x1018	res	1
+                                           r0x1019	res	1
+                                           r0x101A	res	1
+                                           r0x101B	res	1
+                                           r0x1006	res	1
+                                           r0x1005	res	1
+                                           r0x1004	res	1
+                                           r0x1008	res	1
+                                           r0x1007	res	1
+                                           r0x100A	res	1
+                                           r0x1009	res	1
+                                           r0x100B	res	1
+                                           r0x100C	res	1
+                                           r0x100D	res	1
+                                           r0x100E	res	1
+                                           r0x100F	res	1
+                                           r0x1010	res	1
+                                           r0x1012	res	1
+                                           _main_ganadores_65537_7	res	2
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           IDD_Tombola_0	idata
+                                           _random_rand_65536_14
+                                           	db	0xe7, 0x03	; 999
+                                           
+                                           ;--------------------------------------------------------
+                                           ; initialized absolute data
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; reset vector 
+                                           ;--------------------------------------------------------
+                                           STARTUP	code 0x0000
+000000   0000     nop                      	nop
+                                           	pagesel __sdcc_gsinit_startup
+000001   2a04     goto    0x0204           	goto	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_Tombola	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = M
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _random
+                                           ;   _random
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   __mulint
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _isNumberInArray
+                                           ;   __muluschar
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _random
+                                           ;   _random
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   __mulint
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _isNumberInArray
+                                           ;   __muluschar
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;   _print
+                                           ;   _delay
+                                           ;19 compiler assigned registers:
+                                           ;   r0x1026
+                                           ;   r0x1027
+                                           ;   STK02
+                                           ;   STK01
+                                           ;   STK00
+                                           ;   r0x1028
+                                           ;   r0x1029
+                                           ;   r0x102A
+                                           ;   r0x102B
+                                           ;   r0x102C
+                                           ;   r0x102D
+                                           ;   r0x102E
+                                           ;   r0x102F
+                                           ;   r0x1030
+                                           ;   r0x1031
+                                           ;   r0x1032
+                                           ;   STK05
+                                           ;   STK04
+                                           ;   STK03
+                                           ;; Starting pCode block
+                                           S_Tombola__main	code
+                                           _main:
+                                           ; 2 exit points
+                                           ;	.line	20; "Tombola.c"	TRISIO = 0b00010000; // GP4 como entrada por default
+000002   3010     movlw   0x10             	MOVLW	0x10
+000003   1683     bsf     0x03, 0x5        	BANKSEL	_TRISIO
+000004   0085     movwf   0x05             	MOVWF	_TRISIO
+                                           ;	.line	21; "Tombola.c"	GPIO = 0x00; //Todos los pines en bajo
+000005   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000006   0185     clrf    0x05             	CLRF	_GPIO
+                                           ;	.line	26; "Tombola.c"	unsigned int bolas = 0;
+000007   1283     bcf     0x03, 0x5        	BANKSEL	r0x1026
+000008   01a0     clrf    0x20             	CLRF	r0x1026
+000009   01a1     clrf    0x21             	CLRF	r0x1027
+                                           _00115_DS_:
+                                           ;	.line	34; "Tombola.c"	num_1 = random(0,9);
+00000a   3009     movlw   0x09             	MOVLW	0x09
+00000b   00fd     movwf   0x7d             	MOVWF	STK02
+00000c   3000     movlw   0x00             	MOVLW	0x00
+00000d   00fe     movwf   0x7e             	MOVWF	STK01
+00000e   3000     movlw   0x00             	MOVLW	0x00
+00000f   00ff     movwf   0x7f             	MOVWF	STK00
+000010   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_random
+000011   2324     call    0x0324           	CALL	_random
+                                           	PAGESEL	$
+000012   1283     bcf     0x03, 0x5        	BANKSEL	r0x1028
+000013   00a3     movwf   0x23             	MOVWF	r0x1028
+000014   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000015   00a2     movwf   0x22             	MOVWF	r0x1029
+                                           ;	.line	35; "Tombola.c"	num_2 = random(0,9);
+000016   3009     movlw   0x09             	MOVLW	0x09
+000017   00fd     movwf   0x7d             	MOVWF	STK02
+000018   3000     movlw   0x00             	MOVLW	0x00
+000019   00fe     movwf   0x7e             	MOVWF	STK01
+00001a   3000     movlw   0x00             	MOVLW	0x00
+00001b   00ff     movwf   0x7f             	MOVWF	STK00
+00001c   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_random
+00001d   2324     call    0x0324           	CALL	_random
+                                           	PAGESEL	$
+00001e   1283     bcf     0x03, 0x5        	BANKSEL	r0x102A
+00001f   00a5     movwf   0x25             	MOVWF	r0x102A
+000020   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000021   00a4     movwf   0x24             	MOVWF	r0x102B
+                                           ;	.line	38; "Tombola.c"	print(num_1, 0);
+000022   3000     movlw   0x00             	MOVLW	0x00
+000023   00fd     movwf   0x7d             	MOVWF	STK02
+000024   3000     movlw   0x00             	MOVLW	0x00
+000025   00fe     movwf   0x7e             	MOVWF	STK01
+000026   0822     movf    0x22, 0x0        	MOVF	r0x1029,W
+000027   00ff     movwf   0x7f             	MOVWF	STK00
+000028   0823     movf    0x23, 0x0        	MOVF	r0x1028,W
+                                           	PAGESEL	_print
+000029   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	39; "Tombola.c"	delay(time);
+00002a   300a     movlw   0x0a             	MOVLW	0x0a
+00002b   00ff     movwf   0x7f             	MOVWF	STK00
+00002c   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00002d   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	40; "Tombola.c"	print(num_2, 1);
+00002e   3001     movlw   0x01             	MOVLW	0x01
+00002f   00fd     movwf   0x7d             	MOVWF	STK02
+000030   3000     movlw   0x00             	MOVLW	0x00
+000031   00fe     movwf   0x7e             	MOVWF	STK01
+000032   1283     bcf     0x03, 0x5        	BANKSEL	r0x102B
+000033   0824     movf    0x24, 0x0        	MOVF	r0x102B,W
+000034   00ff     movwf   0x7f             	MOVWF	STK00
+000035   0825     movf    0x25, 0x0        	MOVF	r0x102A,W
+                                           	PAGESEL	_print
+000036   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	41; "Tombola.c"	delay(time);
+000037   300a     movlw   0x0a             	MOVLW	0x0a
+000038   00ff     movwf   0x7f             	MOVWF	STK00
+000039   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00003a   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	44; "Tombola.c"	if(GP4)  
+00003b   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+00003c   1e05     btfss   0x05, 0x4        	BTFSS	_GPIObits,4
+00003d   28bc     goto    0x00bc           	GOTO	_00111_DS_
+                                           ;	.line	46; "Tombola.c"	while (GP4)
+00003e   1283     bcf     0x03, 0x5        	BANKSEL	r0x1029
+00003f   0822     movf    0x22, 0x0        	MOVF	r0x1029,W
+000040   00fd     movwf   0x7d             	MOVWF	STK02
+000041   0823     movf    0x23, 0x0        	MOVF	r0x1028,W
+000042   00fe     movwf   0x7e             	MOVWF	STK01
+000043   300a     movlw   0x0a             	MOVLW	0x0a
+000044   00ff     movwf   0x7f             	MOVWF	STK00
+000045   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	__mulint
+000046   22a0     call    0x02a0           	CALL	__mulint
+                                           	PAGESEL	$
+000047   1283     bcf     0x03, 0x5        	BANKSEL	r0x102C
+000048   00a7     movwf   0x27             	MOVWF	r0x102C
+000049   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00004a   00a6     movwf   0x26             	MOVWF	r0x102D
+00004b   0824     movf    0x24, 0x0        	MOVF	r0x102B,W
+00004c   07a6     addwf   0x26, 0x1        	ADDWF	r0x102D,F
+00004d   0825     movf    0x25, 0x0        	MOVF	r0x102A,W
+00004e   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00004f   0f25     incfsz  0x25, 0x0        	INCFSZ	r0x102A,W
+000050   07a7     addwf   0x27, 0x1        	ADDWF	r0x102C,F
+                                           _00107_DS_:
+000051   1283     bcf     0x03, 0x5        	BANKSEL	_GPIObits
+000052   1e05     btfss   0x05, 0x4        	BTFSS	_GPIObits,4
+000053   28bc     goto    0x00bc           	GOTO	_00111_DS_
+                                           ;	.line	48; "Tombola.c"	print(num_1, 0);
+000054   3000     movlw   0x00             	MOVLW	0x00
+000055   00fd     movwf   0x7d             	MOVWF	STK02
+000056   3000     movlw   0x00             	MOVLW	0x00
+000057   00fe     movwf   0x7e             	MOVWF	STK01
+000058   1283     bcf     0x03, 0x5        	BANKSEL	r0x1029
+000059   0822     movf    0x22, 0x0        	MOVF	r0x1029,W
+00005a   00ff     movwf   0x7f             	MOVWF	STK00
+00005b   0823     movf    0x23, 0x0        	MOVF	r0x1028,W
+                                           	PAGESEL	_print
+00005c   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	49; "Tombola.c"	delay(time);
+00005d   300a     movlw   0x0a             	MOVLW	0x0a
+00005e   00ff     movwf   0x7f             	MOVWF	STK00
+00005f   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000060   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	50; "Tombola.c"	print(num_2, 1);
+000061   3001     movlw   0x01             	MOVLW	0x01
+000062   00fd     movwf   0x7d             	MOVWF	STK02
+000063   3000     movlw   0x00             	MOVLW	0x00
+000064   00fe     movwf   0x7e             	MOVWF	STK01
+000065   1283     bcf     0x03, 0x5        	BANKSEL	r0x102B
+000066   0824     movf    0x24, 0x0        	MOVF	r0x102B,W
+000067   00ff     movwf   0x7f             	MOVWF	STK00
+000068   0825     movf    0x25, 0x0        	MOVF	r0x102A,W
+                                           	PAGESEL	_print
+000069   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	51; "Tombola.c"	delay(time);
+00006a   300a     movlw   0x0a             	MOVLW	0x0a
+00006b   00ff     movwf   0x7f             	MOVWF	STK00
+00006c   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00006d   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	56; "Tombola.c"	if (!isNumberInArray(ganadores, bolas+1, ganador))
+00006e   3000     movlw   0x00             	MOVLW	high (_main_ganadores_65537_7 + 0)
+00006f   1283     bcf     0x03, 0x5        	BANKSEL	r0x102E
+000070   00a9     movwf   0x29             	MOVWF	r0x102E
+000071   304b     movlw   0x4b             	MOVLW	(_main_ganadores_65537_7 + 0)
+000072   00a8     movwf   0x28             	MOVWF	r0x102F
+                                           ;;1	CLRF	r0x1030
+000073   3001     movlw   0x01             	MOVLW	0x01
+000074   0720     addwf   0x20, 0x0        	ADDWF	r0x1026,W
+000075   00aa     movwf   0x2a             	MOVWF	r0x1031
+000076   01ab     clrf    0x2b             	CLRF	r0x1032
+000077   0dab     rlf     0x2b, 0x1        	RLF	r0x1032,F
+000078   0821     movf    0x21, 0x0        	MOVF	r0x1027,W
+000079   07ab     addwf   0x2b, 0x1        	ADDWF	r0x1032,F
+00007a   0826     movf    0x26, 0x0        	MOVF	r0x102D,W
+00007b   00fa     movwf   0x7a             	MOVWF	STK05
+00007c   0827     movf    0x27, 0x0        	MOVF	r0x102C,W
+00007d   00fb     movwf   0x7b             	MOVWF	STK04
+00007e   082a     movf    0x2a, 0x0        	MOVF	r0x1031,W
+00007f   00fc     movwf   0x7c             	MOVWF	STK03
+000080   082b     movf    0x2b, 0x0        	MOVF	r0x1032,W
+000081   00fd     movwf   0x7d             	MOVWF	STK02
+000082   0828     movf    0x28, 0x0        	MOVF	r0x102F,W
+000083   00fe     movwf   0x7e             	MOVWF	STK01
+000084   0829     movf    0x29, 0x0        	MOVF	r0x102E,W
+000085   00ff     movwf   0x7f             	MOVWF	STK00
+000086   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_isNumberInArray
+000087   23ca     call    0x03ca           	CALL	_isNumberInArray
+                                           	PAGESEL	$
+000088   1283     bcf     0x03, 0x5        	BANKSEL	r0x102E
+000089   00a9     movwf   0x29             	MOVWF	r0x102E
+00008a   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00008b   00a8     movwf   0x28             	MOVWF	r0x102F
+00008c   0429     iorwf   0x29, 0x0        	IORWF	r0x102E,W
+00008d   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00008e   28b7     goto    0x00b7           	GOTO	_00106_DS_
+                                           ;	.line	59; "Tombola.c"	ganadores[bolas+1] = ganador;
+00008f   0820     movf    0x20, 0x0        	MOVF	r0x1026,W
+000090   00a8     movwf   0x28             	MOVWF	r0x102F
+000091   00a9     movwf   0x29             	MOVWF	r0x102E
+000092   0a29     incf    0x29, 0x0        	INCF	r0x102E,W
+000093   00a8     movwf   0x28             	MOVWF	r0x102F
+000094   3002     movlw   0x02             	MOVLW	0x02
+000095   00ff     movwf   0x7f             	MOVWF	STK00
+000096   0828     movf    0x28, 0x0        	MOVF	r0x102F,W
+                                           	PAGESEL	__muluschar
+000097   2518     call    0x0518           	CALL	__muluschar
+                                           	PAGESEL	$
+000098   1283     bcf     0x03, 0x5        	BANKSEL	r0x102E
+000099   00a9     movwf   0x29             	MOVWF	r0x102E
+00009a   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+00009b   00a8     movwf   0x28             	MOVWF	r0x102F
+00009c   3e4b     addlw   0x4b             	ADDLW	(_main_ganadores_65537_7 + 0)
+00009d   00a8     movwf   0x28             	MOVWF	r0x102F
+00009e   0829     movf    0x29, 0x0        	MOVF	r0x102E,W
+00009f   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+0000a0   0f29     incfsz  0x29, 0x0        	INCFSZ	r0x102E,W
+0000a1   3e00     addlw   0x00             	ADDLW	high (_main_ganadores_65537_7 + 0)
+0000a2   00a9     movwf   0x29             	MOVWF	r0x102E
+0000a3   0828     movf    0x28, 0x0        	MOVF	r0x102F,W
+0000a4   1283     bcf     0x03, 0x5        	BANKSEL	FSR
+0000a5   0084     movwf   0x04             	MOVWF	FSR
+0000a6   1383     bcf     0x03, 0x7        	BCF	STATUS,7
+0000a7   1283     bcf     0x03, 0x5        	BANKSEL	r0x102E
+0000a8   1829     btfsc   0x29, 0x0        	BTFSC	r0x102E,0
+0000a9   1783     bsf     0x03, 0x7        	BSF	STATUS,7
+0000aa   0826     movf    0x26, 0x0        	MOVF	r0x102D,W
+0000ab   1283     bcf     0x03, 0x5        	BANKSEL	INDF
+0000ac   0080     movwf   0x00             	MOVWF	INDF
+0000ad   0a84     incf    0x04, 0x1        	INCF	FSR,F
+0000ae   1283     bcf     0x03, 0x5        	BANKSEL	r0x102C
+0000af   0827     movf    0x27, 0x0        	MOVF	r0x102C,W
+0000b0   1283     bcf     0x03, 0x5        	BANKSEL	INDF
+0000b1   0080     movwf   0x00             	MOVWF	INDF
+                                           ;	.line	61; "Tombola.c"	bolas = bolas + 1;
+0000b2   1283     bcf     0x03, 0x5        	BANKSEL	r0x1031
+0000b3   082a     movf    0x2a, 0x0        	MOVF	r0x1031,W
+0000b4   00a0     movwf   0x20             	MOVWF	r0x1026
+0000b5   082b     movf    0x2b, 0x0        	MOVF	r0x1032,W
+0000b6   00a1     movwf   0x21             	MOVWF	r0x1027
+                                           _00106_DS_:
+                                           ;	.line	64; "Tombola.c"	bolas = bolas + 1;
+0000b7   1283     bcf     0x03, 0x5        	BANKSEL	r0x1026
+0000b8   0aa0     incf    0x20, 0x1        	INCF	r0x1026,F
+0000b9   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+0000ba   0aa1     incf    0x21, 0x1        	INCF	r0x1027,F
+0000bb   2851     goto    0x0051           	GOTO	_00107_DS_
+                                           _00111_DS_:
+                                           ;	.line	70; "Tombola.c"	if (bolas == 10)
+0000bc   1283     bcf     0x03, 0x5        	BANKSEL	r0x1026
+0000bd   0820     movf    0x20, 0x0        	MOVF	r0x1026,W
+0000be   3a0a     xorlw   0x0a             	XORLW	0x0a
+0000bf   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000c0   280a     goto    0x000a           	GOTO	_00115_DS_
+0000c1   0821     movf    0x21, 0x0        	MOVF	r0x1027,W
+0000c2   3a00     xorlw   0x00             	XORLW	0x00
+0000c3   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0000c4   280a     goto    0x000a           	GOTO	_00115_DS_
+                                           ;	.line	73; "Tombola.c"	print(9, 0);
+0000c5   3000     movlw   0x00             	MOVLW	0x00
+0000c6   00fd     movwf   0x7d             	MOVWF	STK02
+0000c7   3000     movlw   0x00             	MOVLW	0x00
+0000c8   00fe     movwf   0x7e             	MOVWF	STK01
+0000c9   3009     movlw   0x09             	MOVLW	0x09
+0000ca   00ff     movwf   0x7f             	MOVWF	STK00
+0000cb   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+0000cc   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	74; "Tombola.c"	delay(time);
+0000cd   300a     movlw   0x0a             	MOVLW	0x0a
+0000ce   00ff     movwf   0x7f             	MOVWF	STK00
+0000cf   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0000d0   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	75; "Tombola.c"	print(9, 1);
+0000d1   3001     movlw   0x01             	MOVLW	0x01
+0000d2   00fd     movwf   0x7d             	MOVWF	STK02
+0000d3   3000     movlw   0x00             	MOVLW	0x00
+0000d4   00fe     movwf   0x7e             	MOVWF	STK01
+0000d5   3009     movlw   0x09             	MOVLW	0x09
+0000d6   00ff     movwf   0x7f             	MOVWF	STK00
+0000d7   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+0000d8   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	76; "Tombola.c"	delay(time);
+0000d9   300a     movlw   0x0a             	MOVLW	0x0a
+0000da   00ff     movwf   0x7f             	MOVWF	STK00
+0000db   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0000dc   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	78; "Tombola.c"	print(9, 0);
+0000dd   3000     movlw   0x00             	MOVLW	0x00
+0000de   00fd     movwf   0x7d             	MOVWF	STK02
+0000df   3000     movlw   0x00             	MOVLW	0x00
+0000e0   00fe     movwf   0x7e             	MOVWF	STK01
+0000e1   3009     movlw   0x09             	MOVLW	0x09
+0000e2   00ff     movwf   0x7f             	MOVWF	STK00
+0000e3   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+0000e4   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	79; "Tombola.c"	delay(time);
+0000e5   300a     movlw   0x0a             	MOVLW	0x0a
+0000e6   00ff     movwf   0x7f             	MOVWF	STK00
+0000e7   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0000e8   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	80; "Tombola.c"	print(9, 1);
+0000e9   3001     movlw   0x01             	MOVLW	0x01
+0000ea   00fd     movwf   0x7d             	MOVWF	STK02
+0000eb   3000     movlw   0x00             	MOVLW	0x00
+0000ec   00fe     movwf   0x7e             	MOVWF	STK01
+0000ed   3009     movlw   0x09             	MOVLW	0x09
+0000ee   00ff     movwf   0x7f             	MOVWF	STK00
+0000ef   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+0000f0   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	81; "Tombola.c"	delay(time);
+0000f1   300a     movlw   0x0a             	MOVLW	0x0a
+0000f2   00ff     movwf   0x7f             	MOVWF	STK00
+0000f3   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+0000f4   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	83; "Tombola.c"	print(9, 0);
+0000f5   3000     movlw   0x00             	MOVLW	0x00
+0000f6   00fd     movwf   0x7d             	MOVWF	STK02
+0000f7   3000     movlw   0x00             	MOVLW	0x00
+0000f8   00fe     movwf   0x7e             	MOVWF	STK01
+0000f9   3009     movlw   0x09             	MOVLW	0x09
+0000fa   00ff     movwf   0x7f             	MOVWF	STK00
+0000fb   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+0000fc   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	84; "Tombola.c"	delay(time);
+0000fd   300a     movlw   0x0a             	MOVLW	0x0a
+0000fe   00ff     movwf   0x7f             	MOVWF	STK00
+0000ff   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+000100   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	85; "Tombola.c"	print(9, 1);
+000101   3001     movlw   0x01             	MOVLW	0x01
+000102   00fd     movwf   0x7d             	MOVWF	STK02
+000103   3000     movlw   0x00             	MOVLW	0x00
+000104   00fe     movwf   0x7e             	MOVWF	STK01
+000105   3009     movlw   0x09             	MOVLW	0x09
+000106   00ff     movwf   0x7f             	MOVWF	STK00
+000107   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_print
+000108   2112     call    0x0112           	CALL	_print
+                                           	PAGESEL	$
+                                           ;	.line	86; "Tombola.c"	delay(time);
+000109   300a     movlw   0x0a             	MOVLW	0x0a
+00010a   00ff     movwf   0x7f             	MOVWF	STK00
+00010b   3000     movlw   0x00             	MOVLW	0x00
+                                           	PAGESEL	_delay
+00010c   247e     call    0x047e           	CALL	_delay
+                                           	PAGESEL	$
+                                           ;	.line	89; "Tombola.c"	bolas = 0;
+00010d   1283     bcf     0x03, 0x5        	BANKSEL	r0x1026
+00010e   01a0     clrf    0x20             	CLRF	r0x1026
+00010f   01a1     clrf    0x21             	CLRF	r0x1027
+000110   280a     goto    0x000a           	GOTO	_00115_DS_
+                                           ;	.line	93; "Tombola.c"	}
+000111   0008     return                   	RETURN	
+                                           ; exit point of _main
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   __gptrget2
+                                           ;   __gptrget2
+                                           ;22 compiler assigned registers:
+                                           ;   r0x1004
+                                           ;   STK00
+                                           ;   r0x1005
+                                           ;   STK01
+                                           ;   r0x1006
+                                           ;   STK02
+                                           ;   r0x1007
+                                           ;   STK03
+                                           ;   r0x1008
+                                           ;   STK04
+                                           ;   r0x1009
+                                           ;   STK05
+                                           ;   r0x100A
+                                           ;   r0x100B
+                                           ;   r0x100C
+                                           ;   r0x100D
+                                           ;   r0x100E
+                                           ;   r0x100F
+                                           ;   r0x1010
+                                           ;   r0x1011
+                                           ;   r0x1012
+                                           ;   r0x1013
+                                           ;; Starting pCode block
+                                           S_Tombola__isNumberInArray	code
+                                           _isNumberInArray:
+                                           ; 2 exit points
+                                           ;	.line	171; "Tombola.c"	int isNumberInArray(unsigned int *array, unsigned int size, unsigned int number)
+0003ca   1283     bcf     0x03, 0x5        	BANKSEL	r0x1004
+0003cb   00bf     movwf   0x3f             	MOVWF	r0x1004
+0003cc   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+0003cd   00be     movwf   0x3e             	MOVWF	r0x1005
+0003ce   087e     movf    0x7e, 0x0        	MOVF	STK01,W
+0003cf   00bd     movwf   0x3d             	MOVWF	r0x1006
+0003d0   087d     movf    0x7d, 0x0        	MOVF	STK02,W
+0003d1   00c1     movwf   0x41             	MOVWF	r0x1007
+0003d2   087c     movf    0x7c, 0x0        	MOVF	STK03,W
+0003d3   00c0     movwf   0x40             	MOVWF	r0x1008
+0003d4   087b     movf    0x7b, 0x0        	MOVF	STK04,W
+0003d5   00c3     movwf   0x43             	MOVWF	r0x1009
+0003d6   087a     movf    0x7a, 0x0        	MOVF	STK05,W
+0003d7   00c2     movwf   0x42             	MOVWF	r0x100A
+                                           ;	.line	173; "Tombola.c"	for (unsigned int i = 0; i < size; ++i)
+0003d8   01c4     clrf    0x44             	CLRF	r0x100B
+0003d9   01c5     clrf    0x45             	CLRF	r0x100C
+0003da   01c6     clrf    0x46             	CLRF	r0x100D
+0003db   01c7     clrf    0x47             	CLRF	r0x100E
+                                           _00222_DS_:
+0003dc   1283     bcf     0x03, 0x5        	BANKSEL	r0x1007
+0003dd   0841     movf    0x41, 0x0        	MOVF	r0x1007,W
+0003de   0245     subwf   0x45, 0x0        	SUBWF	r0x100C,W
+0003df   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0003e0   2be3     goto    0x03e3           	GOTO	_00238_DS_
+0003e1   0840     movf    0x40, 0x0        	MOVF	r0x1008,W
+0003e2   0244     subwf   0x44, 0x0        	SUBWF	r0x100B,W
+                                           _00238_DS_:
+0003e3   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+0003e4   2c0c     goto    0x040c           	GOTO	_00220_DS_
+                                           ;;genSkipc:3307: created from rifx:0x7ffef2424db0
+                                           ;	.line	175; "Tombola.c"	if (array[i] == number)
+0003e5   1283     bcf     0x03, 0x5        	BANKSEL	r0x100D
+0003e6   0846     movf    0x46, 0x0        	MOVF	r0x100D,W
+0003e7   073d     addwf   0x3d, 0x0        	ADDWF	r0x1006,W
+0003e8   00c8     movwf   0x48             	MOVWF	r0x100F
+0003e9   083e     movf    0x3e, 0x0        	MOVF	r0x1005,W
+0003ea   00c9     movwf   0x49             	MOVWF	r0x1010
+0003eb   0847     movf    0x47, 0x0        	MOVF	r0x100E,W
+0003ec   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+0003ed   0f47     incfsz  0x47, 0x0        	INCFSZ	r0x100E,W
+0003ee   07c9     addwf   0x49, 0x1        	ADDWF	r0x1010,F
+                                           ;;101	MOVF	r0x1004,W
+                                           ;;99	MOVWF	r0x1011
+0003ef   0848     movf    0x48, 0x0        	MOVF	r0x100F,W
+0003f0   00fe     movwf   0x7e             	MOVWF	STK01
+0003f1   0849     movf    0x49, 0x0        	MOVF	r0x1010,W
+0003f2   00ff     movwf   0x7f             	MOVWF	STK00
+                                           ;;100	MOVF	r0x1011,W
+0003f3   083f     movf    0x3f, 0x0        	MOVF	r0x1004,W
+                                           	PAGESEL	__gptrget2
+0003f4   244a     call    0x044a           	CALL	__gptrget2
+                                           	PAGESEL	$
+0003f5   1283     bcf     0x03, 0x5        	BANKSEL	r0x1012
+0003f6   00ca     movwf   0x4a             	MOVWF	r0x1012
+0003f7   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+                                           ;;1	MOVWF	r0x1013
+0003f8   0642     xorwf   0x42, 0x0        	XORWF	r0x100A,W
+0003f9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0003fa   2c03     goto    0x0403           	GOTO	_00223_DS_
+0003fb   0843     movf    0x43, 0x0        	MOVF	r0x1009,W
+0003fc   064a     xorwf   0x4a, 0x0        	XORWF	r0x1012,W
+0003fd   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0003fe   2c03     goto    0x0403           	GOTO	_00223_DS_
+                                           ;	.line	178; "Tombola.c"	return 1; // Verdadero
+0003ff   3001     movlw   0x01             	MOVLW	0x01
+000400   00ff     movwf   0x7f             	MOVWF	STK00
+000401   3000     movlw   0x00             	MOVLW	0x00
+000402   2c0f     goto    0x040f           	GOTO	_00224_DS_
+                                           _00223_DS_:
+                                           ;	.line	173; "Tombola.c"	for (unsigned int i = 0; i < size; ++i)
+000403   3002     movlw   0x02             	MOVLW	0x02
+000404   1283     bcf     0x03, 0x5        	BANKSEL	r0x100D
+000405   07c6     addwf   0x46, 0x1        	ADDWF	r0x100D,F
+000406   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000407   0ac7     incf    0x47, 0x1        	INCF	r0x100E,F
+000408   0ac4     incf    0x44, 0x1        	INCF	r0x100B,F
+000409   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00040a   0ac5     incf    0x45, 0x1        	INCF	r0x100C,F
+00040b   2bdc     goto    0x03dc           	GOTO	_00222_DS_
+                                           _00220_DS_:
+                                           ;	.line	183; "Tombola.c"	return 0; // Falso
+00040c   3000     movlw   0x00             	MOVLW	0x00
+00040d   00ff     movwf   0x7f             	MOVWF	STK00
+00040e   3000     movlw   0x00             	MOVLW	0x00
+                                           _00224_DS_:
+                                           ;	.line	184; "Tombola.c"	}
+00040f   0008     return                   	RETURN	
+                                           ; exit point of _isNumberInArray
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;9 compiler assigned registers:
+                                           ;   r0x1014
+                                           ;   STK00
+                                           ;   r0x1015
+                                           ;   r0x1016
+                                           ;   r0x1017
+                                           ;   r0x1018
+                                           ;   r0x1019
+                                           ;   r0x101A
+                                           ;   r0x101B
+                                           ;; Starting pCode block
+                                           S_Tombola__delay	code
+                                           _delay:
+                                           ; 2 exit points
+                                           ;	.line	160; "Tombola.c"	void delay(unsigned int time)
+00047e   1283     bcf     0x03, 0x5        	BANKSEL	r0x1014
+00047f   00b6     movwf   0x36             	MOVWF	r0x1014
+000480   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000481   00b5     movwf   0x35             	MOVWF	r0x1015
+                                           ;	.line	165; "Tombola.c"	for(i=0;i<time;i++)
+000482   01b7     clrf    0x37             	CLRF	r0x1016
+000483   01b8     clrf    0x38             	CLRF	r0x1017
+                                           _00192_DS_:
+000484   1283     bcf     0x03, 0x5        	BANKSEL	r0x1014
+000485   0836     movf    0x36, 0x0        	MOVF	r0x1014,W
+000486   0238     subwf   0x38, 0x0        	SUBWF	r0x1017,W
+000487   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000488   2c8b     goto    0x048b           	GOTO	_00213_DS_
+000489   0835     movf    0x35, 0x0        	MOVF	r0x1015,W
+00048a   0237     subwf   0x37, 0x0        	SUBWF	r0x1016,W
+                                           _00213_DS_:
+00048b   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00048c   2ca8     goto    0x04a8           	GOTO	_00194_DS_
+                                           ;;genSkipc:3307: created from rifx:0x7ffef2424db0
+                                           ;	.line	166; "Tombola.c"	for(j=0;j<1275;j++);
+00048d   30fb     movlw   0xfb             	MOVLW	0xfb
+00048e   1283     bcf     0x03, 0x5        	BANKSEL	r0x1018
+00048f   00b9     movwf   0x39             	MOVWF	r0x1018
+000490   3004     movlw   0x04             	MOVLW	0x04
+000491   00ba     movwf   0x3a             	MOVWF	r0x1019
+                                           _00190_DS_:
+000492   30ff     movlw   0xff             	MOVLW	0xff
+000493   1283     bcf     0x03, 0x5        	BANKSEL	r0x1018
+000494   0739     addwf   0x39, 0x0        	ADDWF	r0x1018,W
+000495   00bb     movwf   0x3b             	MOVWF	r0x101A
+000496   30ff     movlw   0xff             	MOVLW	0xff
+000497   00bc     movwf   0x3c             	MOVWF	r0x101B
+000498   083a     movf    0x3a, 0x0        	MOVF	r0x1019,W
+000499   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+00049a   0f3a     incfsz  0x3a, 0x0        	INCFSZ	r0x1019,W
+00049b   07bc     addwf   0x3c, 0x1        	ADDWF	r0x101B,F
+00049c   083b     movf    0x3b, 0x0        	MOVF	r0x101A,W
+00049d   00b9     movwf   0x39             	MOVWF	r0x1018
+00049e   083c     movf    0x3c, 0x0        	MOVF	r0x101B,W
+00049f   00ba     movwf   0x3a             	MOVWF	r0x1019
+0004a0   083c     movf    0x3c, 0x0        	MOVF	r0x101B,W
+0004a1   043b     iorwf   0x3b, 0x0        	IORWF	r0x101A,W
+0004a2   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0004a3   2c92     goto    0x0492           	GOTO	_00190_DS_
+                                           ;	.line	165; "Tombola.c"	for(i=0;i<time;i++)
+0004a4   0ab7     incf    0x37, 0x1        	INCF	r0x1016,F
+0004a5   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+0004a6   0ab8     incf    0x38, 0x1        	INCF	r0x1017,F
+0004a7   2c84     goto    0x0484           	GOTO	_00192_DS_
+                                           _00194_DS_:
+                                           ;	.line	167; "Tombola.c"	}
+0004a8   0008     return                   	RETURN	
+                                           ; exit point of _delay
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;7 compiler assigned registers:
+                                           ;   r0x101C
+                                           ;   STK00
+                                           ;   r0x101D
+                                           ;   STK01
+                                           ;   r0x101E
+                                           ;   STK02
+                                           ;   r0x101F
+                                           ;; Starting pCode block
+                                           S_Tombola__print	code
+                                           _print:
+                                           ; 2 exit points
+                                           ;	.line	110; "Tombola.c"	void print(int value, int display)
+000112   1283     bcf     0x03, 0x5        	BANKSEL	r0x101C
+000113   00b3     movwf   0x33             	MOVWF	r0x101C
+000114   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000115   00b2     movwf   0x32             	MOVWF	r0x101D
+000116   087e     movf    0x7e, 0x0        	MOVF	STK01,W
+000117   00b4     movwf   0x34             	MOVWF	r0x101E
+000118   087d     movf    0x7d, 0x0        	MOVF	STK02,W
+                                           ;;1	MOVWF	r0x101F
+                                           ;	.line	112; "Tombola.c"	if (display == 0)
+000119   0434     iorwf   0x34, 0x0        	IORWF	r0x101E,W
+00011a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00011b   298f     goto    0x018f           	GOTO	_00179_DS_
+                                           ;	.line	114; "Tombola.c"	if (value == 0) GPIO = 0b00000000;
+00011c   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+00011d   0432     iorwf   0x32, 0x0        	IORWF	r0x101D,W
+00011e   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00011f   2923     goto    0x0123           	GOTO	_00149_DS_
+000120   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000121   0185     clrf    0x05             	CLRF	_GPIO
+000122   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00149_DS_:
+                                           ;	.line	116; "Tombola.c"	else if (value == 1) GPIO = 0b00000001; 
+000123   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000124   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000125   3a01     xorlw   0x01             	XORLW	0x01
+000126   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000127   2930     goto    0x0130           	GOTO	_00146_DS_
+000128   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000129   3a00     xorlw   0x00             	XORLW	0x00
+00012a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00012b   2930     goto    0x0130           	GOTO	_00146_DS_
+00012c   3001     movlw   0x01             	MOVLW	0x01
+00012d   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00012e   0085     movwf   0x05             	MOVWF	_GPIO
+00012f   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00146_DS_:
+                                           ;	.line	118; "Tombola.c"	else if (value == 2) GPIO = 0b00000010; 
+000130   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000131   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000132   3a02     xorlw   0x02             	XORLW	0x02
+000133   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000134   293d     goto    0x013d           	GOTO	_00143_DS_
+000135   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000136   3a00     xorlw   0x00             	XORLW	0x00
+000137   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000138   293d     goto    0x013d           	GOTO	_00143_DS_
+000139   3002     movlw   0x02             	MOVLW	0x02
+00013a   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00013b   0085     movwf   0x05             	MOVWF	_GPIO
+00013c   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00143_DS_:
+                                           ;	.line	120; "Tombola.c"	else if (value == 3) GPIO = 0b00000011;
+00013d   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+00013e   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+00013f   3a03     xorlw   0x03             	XORLW	0x03
+000140   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000141   294a     goto    0x014a           	GOTO	_00140_DS_
+000142   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000143   3a00     xorlw   0x00             	XORLW	0x00
+000144   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000145   294a     goto    0x014a           	GOTO	_00140_DS_
+000146   3003     movlw   0x03             	MOVLW	0x03
+000147   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000148   0085     movwf   0x05             	MOVWF	_GPIO
+000149   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00140_DS_:
+                                           ;	.line	122; "Tombola.c"	else if (value == 4) GPIO = 0b00000100;
+00014a   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+00014b   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+00014c   3a04     xorlw   0x04             	XORLW	0x04
+00014d   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00014e   2957     goto    0x0157           	GOTO	_00137_DS_
+00014f   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000150   3a00     xorlw   0x00             	XORLW	0x00
+000151   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000152   2957     goto    0x0157           	GOTO	_00137_DS_
+000153   3004     movlw   0x04             	MOVLW	0x04
+000154   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000155   0085     movwf   0x05             	MOVWF	_GPIO
+000156   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00137_DS_:
+                                           ;	.line	124; "Tombola.c"	else if (value == 5) GPIO = 0b00000101;
+000157   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000158   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000159   3a05     xorlw   0x05             	XORLW	0x05
+00015a   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00015b   2964     goto    0x0164           	GOTO	_00134_DS_
+00015c   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+00015d   3a00     xorlw   0x00             	XORLW	0x00
+00015e   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00015f   2964     goto    0x0164           	GOTO	_00134_DS_
+000160   3005     movlw   0x05             	MOVLW	0x05
+000161   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000162   0085     movwf   0x05             	MOVWF	_GPIO
+000163   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00134_DS_:
+                                           ;	.line	126; "Tombola.c"	else if (value == 6) GPIO = 0b00000110;
+000164   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000165   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000166   3a06     xorlw   0x06             	XORLW	0x06
+000167   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000168   2971     goto    0x0171           	GOTO	_00131_DS_
+000169   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+00016a   3a00     xorlw   0x00             	XORLW	0x00
+00016b   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00016c   2971     goto    0x0171           	GOTO	_00131_DS_
+00016d   3006     movlw   0x06             	MOVLW	0x06
+00016e   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00016f   0085     movwf   0x05             	MOVWF	_GPIO
+000170   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00131_DS_:
+                                           ;	.line	128; "Tombola.c"	else if (value == 7) GPIO = 0b00000111;
+000171   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000172   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000173   3a07     xorlw   0x07             	XORLW	0x07
+000174   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000175   297e     goto    0x017e           	GOTO	_00128_DS_
+000176   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000177   3a00     xorlw   0x00             	XORLW	0x00
+000178   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000179   297e     goto    0x017e           	GOTO	_00128_DS_
+00017a   3007     movlw   0x07             	MOVLW	0x07
+00017b   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00017c   0085     movwf   0x05             	MOVWF	_GPIO
+00017d   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00128_DS_:
+                                           ;	.line	130; "Tombola.c"	else if (value == 8) GPIO = 0b00010000;
+00017e   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+00017f   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+000180   3a08     xorlw   0x08             	XORLW	0x08
+000181   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000182   298b     goto    0x018b           	GOTO	_00125_DS_
+000183   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000184   3a00     xorlw   0x00             	XORLW	0x00
+000185   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000186   298b     goto    0x018b           	GOTO	_00125_DS_
+000187   3010     movlw   0x10             	MOVLW	0x10
+000188   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000189   0085     movwf   0x05             	MOVWF	_GPIO
+00018a   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00125_DS_:
+                                           ;	.line	132; "Tombola.c"	else GPIO = 0b00010001;
+00018b   3011     movlw   0x11             	MOVLW	0x11
+00018c   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+00018d   0085     movwf   0x05             	MOVWF	_GPIO
+00018e   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00179_DS_:
+                                           ;	.line	137; "Tombola.c"	if (value == 0) GPIO = 0b00100000;
+00018f   1283     bcf     0x03, 0x5        	BANKSEL	r0x101C
+000190   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+000191   0432     iorwf   0x32, 0x0        	IORWF	r0x101D,W
+000192   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+000193   2998     goto    0x0198           	GOTO	_00176_DS_
+000194   3020     movlw   0x20             	MOVLW	0x20
+000195   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000196   0085     movwf   0x05             	MOVWF	_GPIO
+000197   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00176_DS_:
+                                           ;	.line	139; "Tombola.c"	else if (value == 1) GPIO = 0b00100001; 
+000198   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+000199   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+00019a   3a01     xorlw   0x01             	XORLW	0x01
+00019b   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+00019c   29a5     goto    0x01a5           	GOTO	_00173_DS_
+00019d   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+00019e   3a00     xorlw   0x00             	XORLW	0x00
+00019f   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001a0   29a5     goto    0x01a5           	GOTO	_00173_DS_
+0001a1   3021     movlw   0x21             	MOVLW	0x21
+0001a2   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001a3   0085     movwf   0x05             	MOVWF	_GPIO
+0001a4   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00173_DS_:
+                                           ;	.line	141; "Tombola.c"	else if (value == 2) GPIO = 0b00100010; 
+0001a5   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001a6   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001a7   3a02     xorlw   0x02             	XORLW	0x02
+0001a8   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001a9   29b2     goto    0x01b2           	GOTO	_00170_DS_
+0001aa   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001ab   3a00     xorlw   0x00             	XORLW	0x00
+0001ac   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001ad   29b2     goto    0x01b2           	GOTO	_00170_DS_
+0001ae   3022     movlw   0x22             	MOVLW	0x22
+0001af   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001b0   0085     movwf   0x05             	MOVWF	_GPIO
+0001b1   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00170_DS_:
+                                           ;	.line	143; "Tombola.c"	else if (value == 3) GPIO = 0b00100011;
+0001b2   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001b3   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001b4   3a03     xorlw   0x03             	XORLW	0x03
+0001b5   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001b6   29bf     goto    0x01bf           	GOTO	_00167_DS_
+0001b7   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001b8   3a00     xorlw   0x00             	XORLW	0x00
+0001b9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001ba   29bf     goto    0x01bf           	GOTO	_00167_DS_
+0001bb   3023     movlw   0x23             	MOVLW	0x23
+0001bc   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001bd   0085     movwf   0x05             	MOVWF	_GPIO
+0001be   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00167_DS_:
+                                           ;	.line	145; "Tombola.c"	else if (value == 4) GPIO = 0b00100100;
+0001bf   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001c0   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001c1   3a04     xorlw   0x04             	XORLW	0x04
+0001c2   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001c3   29cc     goto    0x01cc           	GOTO	_00164_DS_
+0001c4   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001c5   3a00     xorlw   0x00             	XORLW	0x00
+0001c6   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001c7   29cc     goto    0x01cc           	GOTO	_00164_DS_
+0001c8   3024     movlw   0x24             	MOVLW	0x24
+0001c9   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001ca   0085     movwf   0x05             	MOVWF	_GPIO
+0001cb   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00164_DS_:
+                                           ;	.line	147; "Tombola.c"	else if (value == 5) GPIO = 0b00100101;
+0001cc   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001cd   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001ce   3a05     xorlw   0x05             	XORLW	0x05
+0001cf   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001d0   29d9     goto    0x01d9           	GOTO	_00161_DS_
+0001d1   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001d2   3a00     xorlw   0x00             	XORLW	0x00
+0001d3   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001d4   29d9     goto    0x01d9           	GOTO	_00161_DS_
+0001d5   3025     movlw   0x25             	MOVLW	0x25
+0001d6   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001d7   0085     movwf   0x05             	MOVWF	_GPIO
+0001d8   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00161_DS_:
+                                           ;	.line	149; "Tombola.c"	else if (value == 6) GPIO = 0b00100110;
+0001d9   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001da   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001db   3a06     xorlw   0x06             	XORLW	0x06
+0001dc   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001dd   29e6     goto    0x01e6           	GOTO	_00158_DS_
+0001de   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001df   3a00     xorlw   0x00             	XORLW	0x00
+0001e0   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001e1   29e6     goto    0x01e6           	GOTO	_00158_DS_
+0001e2   3026     movlw   0x26             	MOVLW	0x26
+0001e3   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001e4   0085     movwf   0x05             	MOVWF	_GPIO
+0001e5   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00158_DS_:
+                                           ;	.line	151; "Tombola.c"	else if (value == 7) GPIO = 0b00100111;
+0001e6   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001e7   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001e8   3a07     xorlw   0x07             	XORLW	0x07
+0001e9   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001ea   29f3     goto    0x01f3           	GOTO	_00155_DS_
+0001eb   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001ec   3a00     xorlw   0x00             	XORLW	0x00
+0001ed   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001ee   29f3     goto    0x01f3           	GOTO	_00155_DS_
+0001ef   3027     movlw   0x27             	MOVLW	0x27
+0001f0   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001f1   0085     movwf   0x05             	MOVWF	_GPIO
+0001f2   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00155_DS_:
+                                           ;	.line	153; "Tombola.c"	else if (value == 8) GPIO = 0b00110000;
+0001f3   1283     bcf     0x03, 0x5        	BANKSEL	r0x101D
+0001f4   0832     movf    0x32, 0x0        	MOVF	r0x101D,W
+0001f5   3a08     xorlw   0x08             	XORLW	0x08
+0001f6   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001f7   2a00     goto    0x0200           	GOTO	_00152_DS_
+0001f8   0833     movf    0x33, 0x0        	MOVF	r0x101C,W
+0001f9   3a00     xorlw   0x00             	XORLW	0x00
+0001fa   1d03     btfss   0x03, 0x2        	BTFSS	STATUS,2
+0001fb   2a00     goto    0x0200           	GOTO	_00152_DS_
+0001fc   3030     movlw   0x30             	MOVLW	0x30
+0001fd   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+0001fe   0085     movwf   0x05             	MOVWF	_GPIO
+0001ff   2a03     goto    0x0203           	GOTO	_00181_DS_
+                                           _00152_DS_:
+                                           ;	.line	155; "Tombola.c"	else GPIO = 0b00110001;
+000200   3031     movlw   0x31             	MOVLW	0x31
+000201   1283     bcf     0x03, 0x5        	BANKSEL	_GPIO
+000202   0085     movwf   0x05             	MOVWF	_GPIO
+                                           _00181_DS_:
+                                           ;	.line	157; "Tombola.c"	}
+000203   0008     return                   	RETURN	
+                                           ; exit point of _print
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   __mulint
+                                           ;   __divuint
+                                           ;   __moduint
+                                           ;   __moduint
+                                           ;   __mulint
+                                           ;   __divuint
+                                           ;   __moduint
+                                           ;   __moduint
+                                           ;9 compiler assigned registers:
+                                           ;   r0x1020
+                                           ;   STK00
+                                           ;   r0x1021
+                                           ;   STK01
+                                           ;   r0x1022
+                                           ;   STK02
+                                           ;   r0x1023
+                                           ;   r0x1024
+                                           ;   r0x1025
+                                           ;; Starting pCode block
+                                           S_Tombola__random	code
+                                           _random:
+                                           ; 2 exit points
+                                           ;	.line	96; "Tombola.c"	unsigned int random(unsigned int min, unsigned int max)
+000324   1283     bcf     0x03, 0x5        	BANKSEL	r0x1020
+000325   00ad     movwf   0x2d             	MOVWF	r0x1020
+000326   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000327   00ac     movwf   0x2c             	MOVWF	r0x1021
+000328   087e     movf    0x7e, 0x0        	MOVF	STK01,W
+000329   00af     movwf   0x2f             	MOVWF	r0x1022
+00032a   087d     movf    0x7d, 0x0        	MOVF	STK02,W
+00032b   00ae     movwf   0x2e             	MOVWF	r0x1023
+                                           ;	.line	101; "Tombola.c"	rand += ((rand * rand) /100) % 10000;
+00032c   1283     bcf     0x03, 0x5        	BANKSEL	_random_rand_65536_14
+00032d   086d     movf    0x6d, 0x0        	MOVF	_random_rand_65536_14,W
+00032e   00fd     movwf   0x7d             	MOVWF	STK02
+00032f   086e     movf    0x6e, 0x0        	MOVF	(_random_rand_65536_14 + 1),W
+000330   00fe     movwf   0x7e             	MOVWF	STK01
+000331   086d     movf    0x6d, 0x0        	MOVF	_random_rand_65536_14,W
+000332   00ff     movwf   0x7f             	MOVWF	STK00
+000333   086e     movf    0x6e, 0x0        	MOVF	(_random_rand_65536_14 + 1),W
+                                           	PAGESEL	__mulint
+000334   22a0     call    0x02a0           	CALL	__mulint
+                                           	PAGESEL	$
+000335   1283     bcf     0x03, 0x5        	BANKSEL	r0x1024
+000336   00b1     movwf   0x31             	MOVWF	r0x1024
+000337   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000338   00b0     movwf   0x30             	MOVWF	r0x1025
+000339   3064     movlw   0x64             	MOVLW	0x64
+00033a   00fd     movwf   0x7d             	MOVWF	STK02
+00033b   3000     movlw   0x00             	MOVLW	0x00
+00033c   00fe     movwf   0x7e             	MOVWF	STK01
+00033d   0830     movf    0x30, 0x0        	MOVF	r0x1025,W
+00033e   00ff     movwf   0x7f             	MOVWF	STK00
+00033f   0831     movf    0x31, 0x0        	MOVF	r0x1024,W
+                                           	PAGESEL	__divuint
+000340   2410     call    0x0410           	CALL	__divuint
+                                           	PAGESEL	$
+000341   1283     bcf     0x03, 0x5        	BANKSEL	r0x1024
+000342   00b1     movwf   0x31             	MOVWF	r0x1024
+000343   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000344   00b0     movwf   0x30             	MOVWF	r0x1025
+000345   3010     movlw   0x10             	MOVLW	0x10
+000346   00fd     movwf   0x7d             	MOVWF	STK02
+000347   3027     movlw   0x27             	MOVLW	0x27
+000348   00fe     movwf   0x7e             	MOVWF	STK01
+000349   0830     movf    0x30, 0x0        	MOVF	r0x1025,W
+00034a   00ff     movwf   0x7f             	MOVWF	STK00
+00034b   0831     movf    0x31, 0x0        	MOVF	r0x1024,W
+                                           	PAGESEL	__moduint
+00034c   237d     call    0x037d           	CALL	__moduint
+                                           	PAGESEL	$
+00034d   1283     bcf     0x03, 0x5        	BANKSEL	r0x1024
+00034e   00b1     movwf   0x31             	MOVWF	r0x1024
+00034f   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000350   00b0     movwf   0x30             	MOVWF	r0x1025
+000351   1283     bcf     0x03, 0x5        	BANKSEL	_random_rand_65536_14
+000352   07ed     addwf   0x6d, 0x1        	ADDWF	_random_rand_65536_14,F
+000353   1283     bcf     0x03, 0x5        	BANKSEL	r0x1024
+000354   0831     movf    0x31, 0x0        	MOVF	r0x1024,W
+000355   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000356   0a31     incf    0x31, 0x0        	INCF	r0x1024,W
+000357   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+000358   2b5b     goto    0x035b           	GOTO	_00001_DS_
+000359   1283     bcf     0x03, 0x5        	BANKSEL	_random_rand_65536_14
+00035a   07ee     addwf   0x6e, 0x1        	ADDWF	(_random_rand_65536_14 + 1),F
+                                           _00001_DS_:
+                                           ;	.line	104; "Tombola.c"	return rand % (max+1-min)+min;
+00035b   1283     bcf     0x03, 0x5        	BANKSEL	r0x1023
+00035c   0aae     incf    0x2e, 0x1        	INCF	r0x1023,F
+00035d   1903     btfsc   0x03, 0x2        	BTFSC	STATUS,2
+00035e   0aaf     incf    0x2f, 0x1        	INCF	r0x1022,F
+00035f   082c     movf    0x2c, 0x0        	MOVF	r0x1021,W
+000360   02ae     subwf   0x2e, 0x1        	SUBWF	r0x1023,F
+000361   082d     movf    0x2d, 0x0        	MOVF	r0x1020,W
+000362   1c03     btfss   0x03, 0x0        	BTFSS	STATUS,0
+000363   0f2d     incfsz  0x2d, 0x0        	INCFSZ	r0x1020,W
+000364   02af     subwf   0x2f, 0x1        	SUBWF	r0x1022,F
+000365   082e     movf    0x2e, 0x0        	MOVF	r0x1023,W
+000366   00fd     movwf   0x7d             	MOVWF	STK02
+000367   082f     movf    0x2f, 0x0        	MOVF	r0x1022,W
+000368   00fe     movwf   0x7e             	MOVWF	STK01
+000369   1283     bcf     0x03, 0x5        	BANKSEL	_random_rand_65536_14
+00036a   086d     movf    0x6d, 0x0        	MOVF	_random_rand_65536_14,W
+00036b   00ff     movwf   0x7f             	MOVWF	STK00
+00036c   086e     movf    0x6e, 0x0        	MOVF	(_random_rand_65536_14 + 1),W
+                                           	PAGESEL	__moduint
+00036d   237d     call    0x037d           	CALL	__moduint
+                                           	PAGESEL	$
+00036e   1283     bcf     0x03, 0x5        	BANKSEL	r0x1022
+00036f   00af     movwf   0x2f             	MOVWF	r0x1022
+000370   087f     movf    0x7f, 0x0        	MOVF	STK00,W
+000371   00ae     movwf   0x2e             	MOVWF	r0x1023
+000372   082c     movf    0x2c, 0x0        	MOVF	r0x1021,W
+000373   072e     addwf   0x2e, 0x0        	ADDWF	r0x1023,W
+000374   00ac     movwf   0x2c             	MOVWF	r0x1021
+000375   082f     movf    0x2f, 0x0        	MOVF	r0x1022,W
+000376   1803     btfsc   0x03, 0x0        	BTFSC	STATUS,0
+000377   0f2f     incfsz  0x2f, 0x0        	INCFSZ	r0x1022,W
+000378   07ad     addwf   0x2d, 0x1        	ADDWF	r0x1020,F
+000379   082c     movf    0x2c, 0x0        	MOVF	r0x1021,W
+00037a   00ff     movwf   0x7f             	MOVWF	STK00
+00037b   082d     movf    0x2d, 0x0        	MOVF	r0x1020,W
+                                           ;	.line	106; "Tombola.c"	}
+00037c   0008     return                   	RETURN	
+                                           ; exit point of _random
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	  634+  142 =   776 instructions ( 1836 byte)
+                                           
+                                           	end
