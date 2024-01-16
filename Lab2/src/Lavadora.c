@@ -82,19 +82,54 @@ void setup()
 
 }
 
+// Maquina de estados
+void fsm()
+{	
+	if (PORTD & LED_START_PAUSE) // todo
+	{
+		state = next_state;
+		switch (state)
+		{
+		case STATE_IDE:
+			next_state = STATE_WATER_SUPPLY; 
+			break;	
+		case STATE_FILL:
+			diferential_time_value = FILL(load);
+			next_state = STATE_WASH;
+			break;
+		case STATE_WASH:
+			diferential_time_value = WASH(load);
+			next_state = STATE_RISE;
+			break;
+		case STATE_RINSE:
+			diferential_time_value = RINSE(load);
+			next_state = STATE_SPIN;
+			break;
+		case STATE_SPIN:
+			diferential_time_value = SPIN(load);
+			next_state = STATE_FINISH;
+			break;
+		case STATE_FINISH:
+			FINAL(load);
+			break;
+		default:
+			next_state = STATE_IDEL;
+		}
+	}
+}
 // Función para configurar TIMER 
 void SET_TIMER(uint8_t diferential_time_value)
 {
-	// Configurar el prescaler a 64
+	// Escritura en registro para prescaler. Cada 64 pulsos de reloj se incrementa timer
 	TCCR0B |= (1 << CS01) | (1 << CS00);
 
 	// Definir el valor de comparación
 	OCR0A = diferential_time_value; //15624 si es cada 1s para el prescaler de 64 y un reloj de 1MHz
 
-	// Configuracion del modo de operacion CTC
+	// Modo de operacion CTC: se genera interrupción cada segundo
 	TCCR0A |= (1 << WGM01);
 
-	// Habilitar la interrupción de comparación en la salida A
+	// Se genera interrupción cuando timer=diferential_time_value
   	TIMSK |= (1 << OCIE0A);
 
 	// Se habilitan interrupciones globales
