@@ -70,6 +70,7 @@ uint8_t SPIN(uint8_t load);
 void FINAL(uint8_t load);
 
 
+// Funcionamiento principal de lavadora
 int main(void)
 {
 	// Se inicia configurando entradas, salidas e interrupciones
@@ -82,8 +83,235 @@ int main(void)
 	}
 	return 0;
 }
-//////// INTERRUPCIONES ////////
+//______________________________________________________________
 
+////____Configuración de interrupciones y de TIMER____////
+// Interrupciones
+void setup()
+{
+	//Configuras los pines como entrada
+	DDRB &= ~LOW;
+	DDRA &= ~HIGH;
+	DDRD &= ~(MEDIUM | RESET | START_PAUSE);
+	//Configuras los pines como salida
+	DDRD |= (MEDIUM_LED | LOW_LED | WASH_LED | RINSE_LED);
+	DDRB |= (START_PAUSE_LED | SPIN_LED);
+	DDRA |=	(HIGH_LED | FILL_LED); //revisar como poner como salida pin A2
+
+	// Habilitar pull-up en botones
+    PORTD |= (START_PAUSE | RESET | MEDIUM);
+	PORTB |= LOW; 
+	PORTA |= HIGH;
+
+	//Configucion registro PCMSK para activar interupciones
+	PCMSK |= (1<<PCINT0); // Interrupcion carga baja B0
+
+	PCMSK1 |= (1<<PCINT8); // Interrupcion nivel alta A0
+    
+	PCMSK2 |= (1<<PCINT17); //Interrupcion nivel media D6
+
+	//Configuracion GIMSK para activar interupciones
+	GIMSK |= ((1<<PCIE0) | (1<<PCIE1) | (1<<PCIE2)); //Interupciones de los botones de carga
+	GIMSK |= ((1 << INT0) | (1 << INT1)); // Interrupcion de start/pause y reset
+
+	//MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
+	
+}
+// TIMER
+void SET_TIMER(uint8_t diferential_time_value)
+{
+	// Configurar el prescaler a 64
+	TCCR0B |= (1 << CS01) | (1 << CS00);
+
+	// Definir el valor de comparación
+	OCR0A = diferential_time_value; //15624 si es cada 1s para el prescaler de 64 y un reloj de 1MHz
+
+	// Configuracion del modo de operacion CTC
+	TCCR0A |= (1 << WGM01);
+
+	// Habilitar la interrupción de comparación en la salida A
+  	TIMSK |= (1 << OCIE0A);
+
+	// Se habilitan interrupciones globales
+	sei();
+}
+//______________________________________________________________
+
+////____Máquina de Estados____////
+void FSM()
+{	
+	if (PORTB & START_PAUSE_LED) // todo
+	{
+		state = next_state;
+		switch (state)
+		{
+		case STATE_IDE:
+			next_state = STATE_FILL; 
+			break;	
+		case STATE_FILL:
+			diferential_time_value = FILL(load);
+			next_state = STATE_WASH;
+			break;
+		case STATE_WASH:
+			diferential_time_value = WASH(load);
+			next_state = STATE_RINSE;
+			break;
+		case STATE_RINSE:
+			diferential_time_value = RINSE(load);
+			next_state = STATE_SPIN;
+			break;
+		case STATE_SPIN:
+			diferential_time_value = SPIN(load);
+			next_state = STATE_FINAL;
+			break;
+		case STATE_FINAL:
+			FINAL(load);
+			break;
+		default:
+			next_state = STATE_IDE;
+		}
+	}
+}
+// Primer estado: Se llena de agua el tanque de la lavadora
+uint8_t FILL(uint8_t load)
+{	
+	PORTA |= FILL_LED;
+	PORTD &= ~(WASH_LED | RINSE_LED );
+	PORTB &= ~SPIN_LED;
+
+	if (load == 1){
+		diferential_time_value = 1;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 2){
+		diferential_time_value = 2;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 3){
+		diferential_time_value = 3;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+
+	return diferential_time_value;
+}
+// Segundo estado
+uint8_t WASH(uint8_t load)
+{	
+	PORTD |= WASH_LED;
+	PORTD &= ~RINSE_LED ;
+	PORTA &= ~FILL_LED;
+	PORTB &= ~SPIN_LED;
+
+	if (load == 1){
+		diferential_time_value = 3;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 2){
+		diferential_time_value = 5;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 3){
+		diferential_time_value = 7; // TODO: No se pudo usar los dos displays al mismo tiempo
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+
+	return diferential_time_value;
+}
+// Tercer estado
+uint8_t RINSE(uint8_t load)
+{	
+	PORTD |= RINSE_LED;
+	PORTA &= ~FILL_LED;
+	PORTD &= ~WASH_LED;
+	PORTB &= ~SPIN_LED;
+	
+	if (load == 1){
+		diferential_time_value = 2;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 2){
+		diferential_time_value = 4;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 3){
+		diferential_time_value = 5;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+
+	return diferential_time_value;
+}
+// Cuarto estado
+uint8_t SPIN(uint8_t load)
+{	
+	PORTB |= SPIN_LED;
+	PORTD &= ~(WASH_LED | RINSE_LED);
+	PORTA &= ~FILL_LED;
+	
+	if (load == 1){
+		diferential_time_value = 3;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 2){
+		diferential_time_value = 5;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+	else if (load == 3){
+		diferential_time_value = 6;
+		COUNTDOWN_TIMER(diferential_time_value);
+	}
+
+	return diferential_time_value;
+}
+// Se termina rutina de lavado
+void FINAL(uint8_t load)
+{	
+		/// Primer blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Segundo blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Tercer blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		// Deja encendido
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+}
+//______________________________________________________________
+
+////////______INTERRUPCIONES______////////
 // RESET
 ISR(INT0_vect) 
 {
@@ -95,11 +323,86 @@ ISR(INT0_vect)
 		PORTB &= ~SPIN_LED;
 	}
 	else{
+		/// Primer blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Segundo blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Tercer blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		/// Cuarto blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Quinto blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
+		/// Sexto blink
+		// Enciende
+		PORTD |= RINSE_LED;
+		PORTA |= FILL_LED;
+		PORTD |= WASH_LED;
+		PORTB |= SPIN_LED;
+		_delay_ms(10000);
+		// Apaga
+        PORTD &= ~RINSE_LED;  
+        PORTA &= ~FILL_LED;
+        PORTD &= ~WASH_LED;
+        PORTB &= ~SPIN_LED;
+		_delay_ms(10000);
 		state = STATE_IDE;
-		PORTD |= ~RINSE_LED;
-		PORTA |= ~FILL_LED;
-		PORTD |= ~WASH_LED;
-		PORTB |= ~SPIN_LED;
+
+
 		// Reinicio de TIMER
 		diferential_time_value = 0; 
 		COUNTDOWN_TIMER( diferential_time_value);
@@ -180,182 +483,12 @@ ISR(TIMER0_COMPA_vect) {
 	time = 0;
 	time_left = 0;
 }
+//______________________________________________________________
 
-
-
-void setup()
-{
-	//Configuras los pines como entrada
-	DDRB &= ~LOW;
-	DDRA &= ~HIGH;
-	DDRD &= ~(MEDIUM | RESET | START_PAUSE);
-	//Configuras los pines como salida
-	DDRD |= (MEDIUM_LED | LOW_LED | WASH_LED | RINSE_LED);
-	DDRB |= (START_PAUSE_LED | SPIN_LED);
-	DDRA |=	(HIGH_LED | FILL_LED); //revisar como poner como salida pin A2
-
-	// Habilitar pull-up en botones
-    PORTD |= (START_PAUSE | RESET | MEDIUM);
-	PORTB |= LOW; 
-	PORTA |= HIGH;
-
-	//Configucion registro PCMSK para activar interupciones
-	PCMSK |= (1<<PCINT0); // Interrupcion carga baja B0
-
-	PCMSK1 |= (1<<PCINT8); // Interrupcion nivel alta A0
-    
-	PCMSK2 |= (1<<PCINT17); //Interrupcion nivel media D6
-
-	//Configuracion GIMSK para activar interupciones
-	GIMSK |= ((1<<PCIE0) | (1<<PCIE1) | (1<<PCIE2)); //Interupciones de los botones de carga
-	GIMSK |= ((1 << INT0) | (1 << INT1)); // Interrupcion de start/pause y reset
-
-	//MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
-	
-}
-
-void SET_TIMER(uint8_t diferential_time_value)
-{
-	// Configurar el prescaler a 64
-	TCCR0B |= (1 << CS01) | (1 << CS00);
-
-	// Definir el valor de comparación
-	OCR0A = diferential_time_value; //15624 si es cada 1s para el prescaler de 64 y un reloj de 1MHz
-
-	// Configuracion del modo de operacion CTC
-	TCCR0A |= (1 << WGM01);
-
-	// Habilitar la interrupción de comparación en la salida A
-  	TIMSK |= (1 << OCIE0A);
-
-	// Se habilitan interrupciones globales
-	sei();
-}
-
-void FSM()
-{	
-	if (PORTB & START_PAUSE_LED) // todo
-	{
-		state = next_state;
-		switch (state)
-		{
-		case STATE_IDE:
-			next_state = STATE_FILL; 
-			break;	
-		case STATE_FILL:
-			diferential_time_value = FILL(load);
-			next_state = STATE_WASH;
-			break;
-		case STATE_WASH:
-			diferential_time_value = WASH(load);
-			next_state = STATE_RINSE;
-			break;
-		case STATE_RINSE:
-			diferential_time_value = RINSE(load);
-			next_state = STATE_SPIN;
-			break;
-		case STATE_SPIN:
-			diferential_time_value = SPIN(load);
-			next_state = STATE_FINAL;
-			break;
-		case STATE_FINAL:
-			FINAL(load);
-			break;
-		default:
-			next_state = STATE_IDE;
-		}
-	}
-}
-
-uint8_t FILL(uint8_t load)
-{	
-	PORTA |= FILL_LED;
-	PORTD &= ~(WASH_LED | RINSE_LED );
-	PORTB &= ~SPIN_LED;
-
-	if (load == 1){
-		diferential_time_value = 1;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 2){
-		diferential_time_value = 2;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 3){
-		diferential_time_value = 3;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-
-	return diferential_time_value;
-}
-
-uint8_t WASH(uint8_t load)
-{	
-	PORTD |= WASH_LED;
-	PORTD &= ~RINSE_LED ;
-	PORTA &= ~FILL_LED;
-	PORTB &= ~SPIN_LED;
-
-	if (load == 1){
-		diferential_time_value = 3;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 2){
-		diferential_time_value = 5;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 3){
-		diferential_time_value = 7; // TODO: No se pudo usar los dos displays al mismo tiempo
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-
-	return diferential_time_value;
-}
-
-uint8_t RINSE(uint8_t load)
-{	
-	PORTD |= RINSE_LED;
-	PORTA &= ~FILL_LED;
-	PORTD &= ~WASH_LED;
-	PORTB &= ~SPIN_LED;
-	
-	if (load == 1){
-		diferential_time_value = 2;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 2){
-		diferential_time_value = 4;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 3){
-		diferential_time_value = 5;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-
-	return diferential_time_value;
-}
-
-uint8_t SPIN(uint8_t load)
-{	
-	PORTB |= SPIN_LED;
-	PORTD &= ~(WASH_LED | RINSE_LED);
-	PORTA &= ~FILL_LED;
-	
-	if (load == 1){
-		diferential_time_value = 3;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 2){
-		diferential_time_value = 5;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-	else if (load == 3){
-		diferential_time_value = 6;
-		COUNTDOWN_TIMER(diferential_time_value);
-	}
-
-	return diferential_time_value;
-}
+////____DISPLAYS____////
+// Funciones encargadas de mostrar tiempo restante
+// COUNTDOWN_TIMER hace llamado a impresion en 7segmentos
+// LED_7s_display muestra número en display indicado.
 
 void COUNTDOWN_TIMER(int timer)
 {
@@ -367,16 +500,6 @@ void COUNTDOWN_TIMER(int timer)
 	}
 	LED_7s_display(0, 0);
 }
-
-void FINAL(uint8_t load)
-{	
-	// Como final se ponen todas las leds de los estados de lavado en alto 
-	PORTD |= RINSE_LED;
-	PORTA |= FILL_LED;
-	PORTD |= WASH_LED;
-	PORTB |= SPIN_LED;
-}
-
 void LED_7s_display(int valor, int display)
 {
 	PORTB &= 0b10000111;
@@ -425,3 +548,4 @@ void LED_7s_display(int valor, int display)
 		else PORTB |= 0b01001100;
 	}
 }
+//______________________________________________________________
