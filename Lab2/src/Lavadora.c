@@ -259,55 +259,67 @@ uint8_t SPIN(uint8_t load)
 		diferential_time_value = 6;
 		COUNTDOWN_TIMER(diferential_time_value);
 	}
+	// Se apaga motor
+	PORTB &= ~SPIN_LED;
+
 
 	return diferential_time_value;
 }
 // Se termina rutina de lavado
 void FINAL(uint8_t load)
 {	
-		/// Primer blink
-		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
-		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
-		/// Segundo blink
-		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
-		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
-		/// Tercer blink
-		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
-		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		// Deja encendido
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
+	/// Primer blink
+	// Enciende
+	PORTD |= LOW_LED;
+	_delay_ms(1000);
+	PORTD |= MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA |= HIGH_LED;
+	_delay_ms(1000);
+	// Apaga
+	PORTD &= ~LOW_LED;
+	_delay_ms(1000);
+	PORTD &= ~MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA &= ~HIGH_LED;
+	_delay_ms(1000);
+	/// Segundo blink
+	// Enciende
+	PORTD |= LOW_LED;
+	_delay_ms(1000);
+	PORTD |= MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA |= HIGH_LED;
+	_delay_ms(1000);
+	// Apaga
+	PORTD &= ~LOW_LED;
+	_delay_ms(1000);
+	PORTD &= ~MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA &= ~HIGH_LED;
+	_delay_ms(1000);
+	/// Terrcer blink
+	// Enciende
+	PORTD |= LOW_LED;
+	_delay_ms(1000);
+	PORTD |= MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA |= HIGH_LED;
+	_delay_ms(1000);
+	// Apaga
+	PORTD &= ~LOW_LED;
+	_delay_ms(1000);
+	PORTD &= ~MEDIUM_LED;
+	_delay_ms(1000);
+	PORTA &= ~HIGH_LED;
+	_delay_ms(1000);
+
+		
+	// Deja encendido LEDS que indica que finalizó estado
+	PORTD |= LOW_LED;
+	PORTD |= MEDIUM_LED;
+	PORTA |= HIGH_LED;
+
 }
 //______________________________________________________________
 
@@ -325,84 +337,65 @@ ISR(INT0_vect)
 	else{
 		/// Primer blink
 		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
+		PORTD |= LOW_LED;
+		_delay_ms(1000);
 		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
+		PORTD &= ~LOW_LED;
+		_delay_ms(1000);
+		// Enciende
+		PORTD |= MEDIUM_LED;
+		_delay_ms(1000);
+		// Apaga
+		PORTD &= ~MEDIUM_LED;
+		_delay_ms(1000);
+		// Enciende
+		PORTA |= HIGH_LED;
+		_delay_ms(1000);
+		// Apaga
+		PORTA &= ~HIGH_LED;
+		_delay_ms(1000);
 		/// Segundo blink
 		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
+		PORTD |= LOW_LED;
+		_delay_ms(1000);
 		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
+		PORTD &= ~LOW_LED;
+		_delay_ms(1000);
+		// Enciende
+		PORTD |= MEDIUM_LED;
+		_delay_ms(1000);
+		// Apaga
+		PORTD &= ~MEDIUM_LED;
+		_delay_ms(1000);
+		// Enciende
+		PORTA |= HIGH_LED;
+		_delay_ms(1000);
+		// Apaga
+		PORTA &= ~HIGH_LED;
+		_delay_ms(1000);
 		/// Tercer blink
 		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
+		PORTD |= LOW_LED;
+		_delay_ms(1000);
 		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		/// Cuarto blink
+		PORTD &= ~LOW_LED;
+		_delay_ms(1000);
 		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
+		PORTD |= MEDIUM_LED;
+		_delay_ms(1000);
 		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
-		/// Quinto blink
+		PORTD &= ~MEDIUM_LED;
+		_delay_ms(1000);
 		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
+		PORTA |= HIGH_LED;
+		_delay_ms(1000);
 		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
-		/// Sexto blink
-		// Enciende
-		PORTD |= RINSE_LED;
-		PORTA |= FILL_LED;
-		PORTD |= WASH_LED;
-		PORTB |= SPIN_LED;
-		_delay_ms(10000);
-		// Apaga
-        PORTD &= ~RINSE_LED;  
-        PORTA &= ~FILL_LED;
-        PORTD &= ~WASH_LED;
-        PORTB &= ~SPIN_LED;
-		_delay_ms(10000);
+		PORTA &= ~HIGH_LED;
+		_delay_ms(1000);
+
+		// Reinicio de máquina de estados
 		state = STATE_IDE;
-
-
+		next_state = STATE_IDE;
 		// Reinicio de TIMER
 		diferential_time_value = 0; 
 		COUNTDOWN_TIMER( diferential_time_value);
