@@ -146,6 +146,7 @@ void FSM()
 		switch (state)
 		{
 		case STATE_IDE:
+			_delay_ms(10000);
 			next_state = STATE_FILL; 
 			break;	
 		case STATE_FILL:
