@@ -96,25 +96,23 @@ void setup()
 	//Configuras los pines como salida
 	DDRD |= (MEDIUM_LED | LOW_LED | WASH_LED | RINSE_LED);
 	DDRB |= (START_PAUSE_LED | SPIN_LED);
-	DDRA |=	(HIGH_LED | FILL_LED); //revisar como poner como salida pin A2
+	DDRA |=	(HIGH_LED | FILL_LED); 
 
-	// Habilitar pull-up en botones
+	// Botones habilitados
     PORTD |= (START_PAUSE | RESET | MEDIUM);
 	PORTB |= LOW; 
 	PORTA |= HIGH;
 
 	//Configucion registro PCMSK para activar interupciones
-	PCMSK |= (1<<PCINT0); // Interrupcion carga baja B0
+	PCMSK |= (1<<PCINT0); // Interrupcion LOW
 
-	PCMSK1 |= (1<<PCINT8); // Interrupcion nivel alta A0
+	PCMSK1 |= (1<<PCINT8); // Interrupcion HIGH
     
-	PCMSK2 |= (1<<PCINT17); //Interrupcion nivel media D6
+	PCMSK2 |= (1<<PCINT17); //Interrupcion MEDIUM
 
 	//Configuracion GIMSK para activar interupciones
-	GIMSK |= ((1<<PCIE0) | (1<<PCIE1) | (1<<PCIE2)); //Interupciones de los botones de carga
-	GIMSK |= ((1 << INT0) | (1 << INT1)); // Interrupcion de start/pause y reset
-
-	//MCUCR |= (1<<ISC01) | (1<<ISC00); // LA INTERRUPCION SE DETECTARA EN LOS FLANCOS POSITIVOS.
+	GIMSK |= ((1<<PCIE0) | (1<<PCIE1) | (1<<PCIE2)); // LOAD
+	GIMSK |= ((1 << INT0) | (1 << INT1)); // START/PAUSE-RESET
 	
 }
 // TIMER
@@ -123,13 +121,13 @@ void SET_TIMER(uint8_t diferential_time_value)
 	// Configurar el prescaler a 64
 	TCCR0B |= (1 << CS01) | (1 << CS00);
 
-	// Definir el valor de comparación
-	OCR0A = diferential_time_value; //15624 si es cada 1s para el prescaler de 64 y un reloj de 1MHz
+	// Valor de comparación
+	OCR0A = diferential_time_value; 
 
-	// Configuracion del modo de operacion CTC
+	// Configuracion del modo de operacion operación CTC (Clear Timer on Compare Match) 
 	TCCR0A |= (1 << WGM01);
 
-	// Habilitar la interrupción de comparación en la salida A
+	// // Habilitar una interrupción de comparación en la salida A del temporizador.
   	TIMSK |= (1 << OCIE0A);
 
 	// Se habilitan interrupciones globales
