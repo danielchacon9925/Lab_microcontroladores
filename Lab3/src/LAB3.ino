@@ -29,9 +29,9 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(SCLK, DIN, DC, CS, RST);
 
 //Variables de medición
 // DC
-float vDC_A, vDC_B, vDC_C, vDC_D = {0.00};
+float vDC_1, vDC_2, vDC_3, vDC_4 = {0.00};
 // AC
-float vAC_A, vAC_B, vAC_C, vAC_D = {0.00};
+float vAC_1, vAC_2, vAC_3, vAC_4 = {0.00};
 
 // MAX values
 // DC

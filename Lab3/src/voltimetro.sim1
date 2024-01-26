@@ -70,12 +70,12 @@
 
 <item itemtype="Connector" uid="Connector-55" startpinid="Node-54-2" endpinid="Node-48-0" pointList="164,424,164,408" />
 
-<item itemtype="Connector" uid="Connector-56" startpinid="Resistor-29-rPin" endpinid="Uno-1-4" pointList="280,380,380,380,380,492,400,492" />
-
 <item itemtype="Connector" uid="Connector-57" startpinid="Resistor-39-rPin" endpinid="Uno-1-5" pointList="280,408,372,408,372,500,400,500" />
 
 <item itemtype="Connector" uid="Connector-58" startpinid="Resistor-40-rPin" endpinid="Uno-1-6" pointList="280,436,364,436,364,508,400,508" />
 
 <item itemtype="Connector" uid="Connector-59" startpinid="Resistor-41-rPin" endpinid="Uno-1-7" pointList="280,460,356,460,356,516,400,516" />
+
+<item itemtype="Connector" uid="Connector-56" startpinid="Resistor-29-rPin" endpinid="Uno-1-4" pointList="280,380,380,380,380,492,400,492" />
 
 </circuit>
