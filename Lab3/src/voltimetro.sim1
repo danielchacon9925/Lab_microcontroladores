@@ -38,7 +38,7 @@
 
 <item itemtype="TextComponent" CircId="TextComponent-86" mainComp="false" Show_id="false" Show_Val="false" Pos="928,268" rotation="0" hflip="1" vflip="1" label="TextComponent-86" idLabPos="-16,-24" labelrot="0" valLabPos="0,0" valLabRot="0" Margin="5 _Pixels" Border="1 _Pixels" Opacity="1" Font="Helvetica [Cronyx]" Font_Size="10 _Pixels" Fixed_Width="false" Text="Channel_2" />
 
-<item itemtype="Resistor" CircId="Resistor-91" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="816,544" rotation="0" hflip="1" vflip="1" label="Resistor-91" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="220 Ω" />
+<item itemtype="Resistor" CircId="Resistor-91" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="816,544" rotation="0" hflip="1" vflip="1" label="Resistor-91" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="300 Ω" />
 
 <item itemtype="Fixed Voltage" CircId="Fixed Voltage-92" mainComp="false" ShowProp="Voltage" Show_id="false" Show_Val="true" Pos="884,280" rotation="-180" hflip="1" vflip="1" label="Fixed Voltage-92" idLabPos="-64,-24" labelrot="0" valLabPos="-6,19" valLabRot="-180" Out="true" Voltage="12 V" />
 
@@ -52,27 +52,27 @@
 
 <item itemtype="Battery" CircId="Battery-98" mainComp="false" Show_id="false" Show_Val="true" Pos="852,332" rotation="90" hflip="1" vflip="1" label="Battery-98" idLabPos="-18,-22" labelrot="0" valLabPos="-10,10" valLabRot="0" Voltage="5 V" Resistance="1e-14 Ω" />
 
-<item itemtype="Resistor" CircId="Resistor-101" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,400" rotation="0" hflip="1" vflip="1" label="Resistor-101" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="1.2 kΩ" />
+<item itemtype="Resistor" CircId="Resistor-101" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,400" rotation="0" hflip="1" vflip="1" label="Resistor-101" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="2 kΩ" />
 
 <item itemtype="TextComponent" CircId="TextComponent-105" mainComp="false" Show_id="false" Show_Val="false" Pos="936,124" rotation="0" hflip="1" vflip="1" label="TextComponent-105" idLabPos="-16,-24" labelrot="0" valLabPos="0,0" valLabRot="0" Margin="5 _Pixels" Border="1 _Pixels" Opacity="1" Font="Helvetica [Cronyx]" Font_Size="10 _Pixels" Fixed_Width="false" Text="Channel_1" />
 
 <item itemtype="Ground" CircId="Ground-106" mainComp="false" Show_id="false" Show_Val="false" Pos="780,488" rotation="0" hflip="1" vflip="1" label="Ground-106" idLabPos="-16,8" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
-<item itemtype="Resistor" CircId="Resistor-107" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,136" rotation="0" hflip="1" vflip="1" label="Resistor-107" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="1.2 kΩ" />
+<item itemtype="Resistor" CircId="Resistor-107" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,136" rotation="0" hflip="1" vflip="1" label="Resistor-107" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="2 kΩ" />
 
 <item itemtype="Ground" CircId="Ground-109" mainComp="false" Show_id="false" Show_Val="false" Pos="784,372" rotation="0" hflip="1" vflip="1" label="Ground-109" idLabPos="-16,8" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
-<item itemtype="Resistor" CircId="Resistor-110" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="820,304" rotation="0" hflip="1" vflip="1" label="Resistor-110" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="220 Ω" />
+<item itemtype="Resistor" CircId="Resistor-110" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="820,304" rotation="0" hflip="1" vflip="1" label="Resistor-110" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="100 Ω" />
 
 <item itemtype="Ground" CircId="Ground-113" mainComp="false" Show_id="false" Show_Val="false" Pos="848,488" rotation="0" hflip="1" vflip="1" label="Ground-113" idLabPos="-16,8" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
 <item itemtype="Resistor" CircId="Resistor-115" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="780,448" rotation="-90" hflip="1" vflip="1" label="Resistor-115" idLabPos="-12,-20" labelrot="0" valLabPos="-16,6" valLabRot="0" Resistance="300 Ω" />
 
-<item itemtype="Resistor" CircId="Resistor-116" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="816,520" rotation="0" hflip="1" vflip="1" label="Resistor-116" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="1.2 kΩ" />
+<item itemtype="Resistor" CircId="Resistor-116" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="816,520" rotation="0" hflip="1" vflip="1" label="Resistor-116" idLabPos="-12,-20" labelrot="0" valLabPos="-12,-17" valLabRot="0" Resistance="2 kΩ" />
 
 <item itemtype="Battery" CircId="Battery-117" mainComp="false" Show_id="false" Show_Val="true" Pos="848,452" rotation="90" hflip="1" vflip="1" label="Battery-117" idLabPos="-18,-22" labelrot="0" valLabPos="-10,10" valLabRot="0" Voltage="5 V" Resistance="1e-14 Ω" />
 
-<item itemtype="Resistor" CircId="Resistor-118" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,160" rotation="0" hflip="1" vflip="1" label="Resistor-118" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="220 Ω" />
+<item itemtype="Resistor" CircId="Resistor-118" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="824,160" rotation="0" hflip="1" vflip="1" label="Resistor-118" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="100 Ω" />
 
 <item itemtype="Resistor" CircId="Resistor-124" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="788,188" rotation="-90" hflip="1" vflip="1" label="Resistor-124" idLabPos="-12,-20" labelrot="0" valLabPos="-16,6" valLabRot="0" Resistance="300 Ω" />
 
@@ -80,7 +80,7 @@
 
 <item itemtype="TextComponent" CircId="TextComponent-130" mainComp="false" Show_id="false" Show_Val="false" Pos="932,388" rotation="0" hflip="1" vflip="1" label="TextComponent-130" idLabPos="-16,-24" labelrot="0" valLabPos="0,0" valLabRot="0" Margin="5 _Pixels" Border="1 _Pixels" Opacity="1" Font="Helvetica [Cronyx]" Font_Size="10 _Pixels" Fixed_Width="false" Text="Channel_3" />
 
-<item itemtype="Resistor" CircId="Resistor-133" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="820,280" rotation="0" hflip="1" vflip="1" label="Resistor-133" idLabPos="-12,-20" labelrot="0" valLabPos="-13,-17" valLabRot="0" Resistance="1.2 kΩ" />
+<item itemtype="Resistor" CircId="Resistor-133" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="820,280" rotation="0" hflip="1" vflip="1" label="Resistor-133" idLabPos="-12,-20" labelrot="0" valLabPos="-13,-17" valLabRot="0" Resistance="2 kΩ" />
 
 <item itemtype="Ground" CircId="Ground-137" mainComp="false" Show_id="false" Show_Val="false" Pos="848,628" rotation="0" hflip="1" vflip="1" label="Ground-137" idLabPos="-16,8" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
@@ -90,7 +90,7 @@
 
 <item itemtype="Ground" CircId="Ground-141" mainComp="false" Show_id="false" Show_Val="false" Pos="780,628" rotation="0" hflip="1" vflip="1" label="Ground-141" idLabPos="-16,8" labelrot="0" valLabPos="0,0" valLabRot="0" />
 
-<item itemtype="Resistor" CircId="Resistor-144" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="812,424" rotation="0" hflip="1" vflip="1" label="Resistor-144" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="220 Ω" />
+<item itemtype="Resistor" CircId="Resistor-144" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="812,424" rotation="0" hflip="1" vflip="1" label="Resistor-144" idLabPos="-12,-20" labelrot="0" valLabPos="-12,5" valLabRot="0" Resistance="100 Ω" />
 
 <item itemtype="TextComponent" CircId="TextComponent-145" mainComp="false" Show_id="false" Show_Val="false" Pos="932,516" rotation="0" hflip="1" vflip="1" label="TextComponent-145" idLabPos="-16,-24" labelrot="0" valLabPos="0,0" valLabRot="0" Margin="5 _Pixels" Border="1 _Pixels" Opacity="1" Font="Helvetica [Cronyx]" Font_Size="10 _Pixels" Fixed_Width="false" Text="Channel_4" />
 
