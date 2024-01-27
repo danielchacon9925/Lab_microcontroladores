@@ -77,7 +77,14 @@ void setup() {
 // Escalar y ajustar el valor máximo para el rango de [-24, 24]V y retornarlo.
 
 float obtener_val_max(float PUERTO_ANALOGICO) {
-// POR DESARROLLAR
+
+float max = 0; // Para contar la iteración
+for (int j = 0; j < count; j++) // Bucle de 100 iteraciones
+{
+  /* code */
+}
+return PUERTO_ANALOGICO;
+
 }
 
 void loop(){
