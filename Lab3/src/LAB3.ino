@@ -73,6 +73,13 @@ void setup() {
   display.clearDisplay(); // Clear display
 }
 
+// Función de las lecturas analógicas el valor máximo entre esas lecturas.
+// Escalar y ajustar el valor máximo para el rango de [-24, 24]V y retornarlo.
+
+float obtener_val_max(float PUERTO_ANALOGICO) {
+// POR DESARROLLAR
+}
+
 void loop(){
     // Por desarrollar
     // Debe estar constantemente reciebiendo mediciones y mostrando valores en pantalla
