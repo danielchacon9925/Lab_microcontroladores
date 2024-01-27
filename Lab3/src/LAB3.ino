@@ -81,8 +81,20 @@ float obtener_val_max(float PUERTO_ANALOGICO) {
 float max = 0; // Para contar la iteración
 for (int j = 0; j < count; j++) // Bucle de 100 iteraciones
 {
-  /* code */
+  // Lee el valor analógico del puerto
+  // Y se guarda en el flotante lectura
+  float lectura = analogRead(PUERTO_ANALOGICO); 
+  // Compara la lectura con el valor actual max. 
+  // Si la lectura es mayor que max, se actualiza val con el valor de lectura.
+  if (lectura > max){ 
+    max = lectura;
+  }
+  delayMicroseconds(300); // Pequeño delay entre las lecturas.
+  // Luego se las lecturas, se realiza una conversión para escalar
+  // El valor máximo que se leyó.
+  max =  (((val * 5.0) / 1023.0) * 9.6) - 24;
 }
+// Se retorna el valor máximo calculado.
 return PUERTO_ANALOGICO;
 
 }
