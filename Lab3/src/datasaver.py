@@ -1,35 +1,39 @@
-#!/usr/bin/env python3
-# Paquete de comunicacion arduino / python
 import serial
 
 baud = 9600
-samples = 29
 
-file = open("datos.csv", 'w')
-file.close()
-print("Se leyó el archivo")
+# Crear el archivo CSV y cerrarlo inmediatamente
+file_path = "datos.csv"
+with open(file_path, 'w') as file:
+    pass
 
+print("Se creó el archivo CSV")
 
-# Comunicacion con el arduino: puerto ttyS1
+# Establecer la comunicación con Arduino en el puerto ttyS1
 ser = serial.Serial("/tmp/ttyS1", baudrate=baud, timeout=1)
-# ser = serial.Serial("/tmp/ttyS1", baudrate=baud, timeout=1)
+
+# Imprimir un mensaje indicando el puerto al que se ha conectado
+print("Puerto conectado: " + ser.portstr)
 print("Conexión exitosa")
 
-file = open("datos.csv", 'w')  # Archivo csv
-print("Se creó el archivo csv")
+# Abrir el archivo CSV para escritura de datos
+with open(file_path, 'w') as file:
+    print("CSV abierto para escritura de datos")
 
-contador = 0
+    # Indicar canales escritos
+    contador = 0
 
-while (1):
-    getData = str(ser.readline())
-    print("getdata", getData)
-    data = getData[2:][:-5]
-    print(data)
+    while True:
+        # Obtener datos del puerto serie
+        getData = str(ser.readline())
+        data = getData[2:][:-5]
+        print(data)
 
-    if contador == 4:
-        file = open("datos.csv", "a")
-        file.write(data + "\n")
-        contador = 0
-    else:
-        file.write(data + ",")
-        contador += 1
+        if contador == 4:
+            # Si se escribieron los datos de los 4 canales, empezar nueva línea
+            file.write(data + "\n")
+            contador = 0
+        else:
+            file.write(data + ",")
+            # Indicar número de canal de dato escrito
+            contador += 1

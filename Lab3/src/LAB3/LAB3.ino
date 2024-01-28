@@ -77,33 +77,23 @@ void setup()
 
 // Función de las lecturas analógicas el valor máximo entre esas lecturas.
 // Escalar y ajustar el valor máximo para el rango de [-24, 24]V y retornarlo.
-
-// Function that meters a little range of measurements
-// and select the max value of them, then is return
-// the real value in the range of [-24, 24] v
 float obtener_val_max(float PUERTO_ANALOGICO)
 {
+  // Tensión
   float voltage = 0;
-  float rawValue = 0;
-  for (int i = 0; i < 100; i++)
-  {
-    //  float val = analogRead(PUERTO_ANALOGICO);
-    //  if (val > max_val)
-    //  {
-    //    max_val = val;
-    //  }
-    //  delayMicroseconds(150);
-    //}
-    // max_val = (((max_val * 5.0) / 1023.0) * 9.6) - 24;
-    // return max_val;
-    // Read the raw ADC value from the analog pin
-    int rawValue = analogRead(PUERTO_ANALOGICO);
+  // Valor en pin analógico
+  int rawValue = 0;
 
-    // Convert the raw ADC value to voltage
-    float voltage = ((rawValue / 1023.0) * 5.0) * (0.83 + 0.165);
+  // Se lee tensión en pin analógico
+  rawValue = analogRead(PUERTO_ANALOGICO);
 
-    return voltage;
-  }
+  // Analog-to-digital converter ADC tiene resolución de 10 bits
+  // 1024(2^(10)) representa cantidad de valores discretos.
+  // 1024 es el voltage máximo, 5V es tensión de referencia
+  // 0.83 representa relación R2/R3, 0.165 valor de ajuste experimental
+  voltage = ((rawValue / 1023.0) * 5.0) * (0.83 + 0.165);
+
+  return voltage;
 }
 
 ////////////////////
@@ -133,19 +123,19 @@ void loop()
 
     if (read_transmicion)
     {
-      Serial.println("------------ AC/DC:  AC ------------");
-      Serial.println("CHANNEL 1:");
+      Serial.println("-----MODO: AC ----");
+      Serial.println("CANAL 1:");
       Serial.println(vAC_1);
-      Serial.println("CHANNEL 2:");
+      Serial.println("CANAL 2:");
       Serial.println(vAC_2);
-      Serial.println("CHANNEL 3:");
+      Serial.println("CANAL 3:");
       Serial.println(vAC_3);
-      Serial.println("CHANNEL 4:");
+      Serial.println("CANAL 4:");
       Serial.println(vAC_4);
     }
 
     // Mostrar los valores medidos en el display(PCD8544-136).
-    display.print("Voltímetro en AC.\n");
+    display.print("Voltimetro AC\n");
 
     display.print("vAC_1:");
     display.print(vAC_1);
@@ -163,7 +153,7 @@ void loop()
     display.display();
     display.clearDisplay();
 
-    // Call the function Led Alarm for AC
+    // Función de alarma de exceso de tensión
     PRECAUCION(vAC_1, vAC_2, vAC_3, vAC_4, MAX_AC);
   }
   // Caso cuando se desea hacer la lectura en DC.
@@ -177,19 +167,19 @@ void loop()
     // Se imprimen los valores medidos en el monitor serial.
     if (read_transmicion)
     {
-      Serial.println("------------ AC/DC:  DC ------------");
-      Serial.println("CHANNEL 1:");
+      Serial.println("----MODO: DC ----");
+      Serial.println("CANAL 1:");
       Serial.println(vDC_1);
-      Serial.println("CHANNEL 2:");
+      Serial.println("CANAL 2:");
       Serial.println(vDC_2);
-      Serial.println("CHANNEL 3:");
+      Serial.println("CANAL 3:");
       Serial.println(vDC_3);
-      Serial.println("CHANNEL 4:");
+      Serial.println("CANAL 4:");
       Serial.println(vDC_4);
     }
 
     // Se imprimen los valores medidos en el display(PCD8544-136).
-    display.print("Voltímetro en DC.");
+    display.print("Voltimetro DC");
     display.print("\n");
 
     display.print("vDC_1:");
@@ -208,8 +198,7 @@ void loop()
     display.display();
     display.clearDisplay();
 
-    // Llama a una función Precaucion para verificar si se debe activar
-    // un LED de alarma basado en los valores medidos.
+    // Función de alarme de exceso de tensión
     PRECAUCION(vDC_1, vDC_2, vDC_3, vDC_3, MAX_DC);
   }
 
