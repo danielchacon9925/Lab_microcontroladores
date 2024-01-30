@@ -1,4 +1,4 @@
-// Laboratorio 3: Daniel Chacón Mora (B72018), Erick Sancho Alvarado
+// Laboratorio 3: Daniel Chacón Mora (B72018), Erick Sancho Alvarado(B87388)
 
 //  Librerías utilizadas
 
@@ -101,7 +101,7 @@ return PUERTO_ANALOGICO;
 // Función que toma como argumento el número de pin y 
 // retorna el voltaje DC calculado para ese canal. 
 float calcularVoltajeDC(int pin) {
-  
+
   // Lee el valor analógico del pin especificado
   float valorADC = analogRead(pin);
 
