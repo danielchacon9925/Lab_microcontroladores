@@ -1,4 +1,4 @@
-// Laboratorio 4: Daniel Chacón Mora (B72018)-Erick Sancho
+// Laboratorio 4: Daniel Chacón Mora (B72018) - Erick Sancho (B87388)
 
 /////////////////////////
 // Librerías utilizadas//
@@ -249,4 +249,39 @@ static uint16_t read_adc_naiive(uint8_t channel)
   return reg16;
 }
 
+// Inclusión de bibliotecas y definición de funciones de inicialización
+int main(void){
+
+    // Configuración de la consola con una velocidad de baudios de 115200
+    configurar_consola(115200);
+
+    // Configuración del reloj, entrada/salida, USART, SPI, ADC, SDRAM y LCD SPI
+    configurar_reloj();
+    configurar_entrada_salida();
+    configurar_comunicacion_serial();
+    configurar_spi();
+    configurar_adc();
+    inicializar_sdram();
+    inicializar_lcd_spi();
+
+    // Inicialización del sistema de gráficos con una función personalizada para dibujar píxeles
+	inicializar_graficos(funcion_dibujar_pixel, 240, 320);
+
+    // Declaración de una instancia del giroscopio y cadenas de caracteres para almacenar valores
+    giroscopio instancia_giroscopio;
+    char x_eje[10];
+    char y_eje[10];
+    char z_eje[10];
+    char bateria_V_str[10];
+
+    // Variables para la transmisión de datos
+    char mensaje[35], coma[] = ",";
+
+    // Variable para almacenar el voltaje de la batería
+    float v_bateria;
+
+    // Bandera para habilitar o deshabilitar la transmisión
+    int transmision_habilitada = 0;
+
+}
 //____________________________________________________
