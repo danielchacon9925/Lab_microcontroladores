@@ -283,5 +283,13 @@ int main(void){
     // Bandera para habilitar o deshabilitar la transmisión
     int transmision_habilitada = 0;
 
+    while (1)
+    {
+      /* Por desarrollar lógica del sismógrafo aquí dentro del while */
+    }
+
+    return 0;
+    
+
 }
 //____________________________________________________
