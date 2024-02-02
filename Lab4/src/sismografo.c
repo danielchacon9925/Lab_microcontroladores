@@ -24,10 +24,13 @@
 
 // Se hace uso de recursos disponibles en repositorio.
 // Configuración de registros de SPI se implementa:
-// 	1. spi-mems.c encontrado en libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/spi
-//	2. spi.c encontrado en libopencm3-examples/examples/stm32/f3/stm32f3-discovery/spi
+// 	1.  spi-mems.c encontrado en libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/spi
+//	2.  spi.c encontrado en libopencm3-examples/examples/stm32/f3/stm32f3-discovery/spi
 //  Configuración de registros USART1 se implementa
-//  1. usart_irq.c encontrado en libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/usart_irq
+//  1.  usart_irq.c encontrado en libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/usart_irq
+//  Configuración de registros para ADC se implementa:
+//  1.  libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/adc-dac-printf/adc-dac-printf.c
+//  2.  libopencm3-examples/examples/stm32/f3/stm32f3-discovery/adc/adc.c
 
 //////////////////
 // Ejes X, Y, Z	//
@@ -64,10 +67,29 @@ typedef struct GYRO
   int16_t Z;
 } GYRO;
 
-// Declaración de variables
+// Declaración de funciones
 static void usart_setup(void);
+static void spi_setup(void);
+void input_setup(void);
+static void adc_setup(void);
+static uint16_t read_adc_naiive(uint8_t channel);
 
-// Funciones
+/////////
+// Main//
+/////////
+int main(void)
+{
+
+  // Inicialización de funciones
+  input_setup();
+  usart_setup();
+  spi_setup();
+  adc_setup();
+}
+
+//////////////
+// Funciones//
+//////////////
 
 // USART Setup
 static void usart_setup(void)
@@ -96,3 +118,135 @@ static void usart_setup(void)
   //  Se habilita la USART1
   usart_enable(USART1);
 }
+
+// SPI Setup
+static void spi_setup(void)
+{
+  /////////////////////////////
+  //  Configuraciones de GPIO//
+  /////////////////////////////
+
+  //  Configura GPIO7, GPIO8 y GPIO9 en el puerto GPIOF como salidas.
+  gpio_mode_setup(GPIOF, GPIO_MODE_AF, GPIO_PUPD_NONE,
+                  GPIO7 | GPIO8 | GPIO9);
+  //  Se configuran en su alternate function.
+  gpio_set_af(GPIOF, GPIO_AF5, GPIO7 | GPIO8 | GPIO9);
+
+  //  Pin GPIO1 en el puerto GPIOC como una salida en modo push-pull sin PU/PD.
+  gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
+  gpio_set(GPIOC, GPIO1);
+
+  //  Habilitación de clk para pin de SPI
+  rcc_periph_clock_enable(RCC_SPI5);
+  //  Habilitación de clk para GPP
+  rcc_periph_clock_enable(RCC_GPIOC);
+  rcc_periph_clock_enable(RCC_GPIOF);
+
+  //////////////////////
+  // SPI configuration//
+  //////////////////////
+  //  Se define SPI5 como maestro.
+  spi_set_master_mode(SPI5);
+  //  Velocidad de transmisión de periférico es dividida por preescaler (64).
+  spi_set_baudrate_prescaler(SPI5, SPI_CR1_BR_FPCLK_DIV_64);
+  //  Nivel de tensión es 0 cuando no se usa.
+  spi_set_clock_polarity_0(SPI5);
+  //  Los datos se muestrean en el inicio del ciclo de reloj.
+  spi_set_clock_phase_0(SPI5);
+  //  Se habilita trasmisión y recepción simultánea
+  spi_set_full_duplex_mode(SPI5);
+  //  En SPI se tienen MISO y MOSI para permitir señal bidireccional.
+  spi_set_unidirectional_mode(SPI5); /* bidirectional but in 3-wire */
+  //  Se selecciona el slave por medio de software.
+  spi_enable_software_slave_management(SPI5);
+  //  Se envía primero bits más significativos.
+  spi_send_msb_first(SPI5);
+  //  Señal en alto cuando no se está transmitiendo.
+  spi_set_nss_high(SPI5);
+
+  //  Como SPI5 se utiliza para SPI, se deshabilita modo I2S
+  SPI_I2SCFGR(SPI5) &= ~SPI_I2SCFGR_I2SMOD;
+  // Se habilita SPI5 para transmisión y recepción de datos.
+  spi_enable(SPI5);
+  //  Limpia señales en GPIO
+  gpio_clear(GPIOC, GPIO1);
+  //  Se envía comando para leer registor de control
+  spi_send(SPI5, GYR_CTRL_REG1);
+  //  Lee respuesat del registro de control
+  spi_read(SPI5);
+  //  Se envía señal de enable a registros de giroscopio
+  spi_send(SPI5, GYR_CTRL_REG1_PD | GYR_CTRL_REG1_XEN |
+                     GYR_CTRL_REG1_YEN | GYR_CTRL_REG1_ZEN |
+                     (3 << GYR_CTRL_REG1_BW_SHIFT));
+  //  Se leen datos en SPI5 del giroscopio
+  spi_read(SPI5);
+  //  Se configuira GPIO1 en alto
+  gpio_set(GPIOC, GPIO1);
+  //  Se limpia registro
+  gpio_clear(GPIOC, GPIO1);
+  //  Se envía información de registro de control de giroscopio
+  spi_send(SPI5, GYR_CTRL_REG4);
+  //  Se lee pin
+  spi_read(SPI5);
+  //  Se genera número donde solo el bit indicado por señal de giroscopio está en alto
+  //  y se envía dato a SPI5
+  spi_send(SPI5, (1 << GYR_CTRL_REG4_FS_SHIFT));
+  //  Se lee el dato en SPI5
+  spi_read(SPI5);
+  //  Se configuira GPIO1 en alto
+  gpio_set(GPIOC, GPIO1);
+}
+//  Input setup
+void input_setup(void)
+{
+
+  //  Se habilita pin como entrada open drain para conectar varios dispositivos
+  gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
+
+  //  Se habilita pin para suministrar alta o baja corriente a pines de LEDs.
+  gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
+  gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
+
+  //  Reloj se habilita para pin GPP digital
+  rcc_periph_clock_enable(RCC_GPIOA);
+  rcc_periph_clock_enable(RCC_GPIOG);
+
+  //  Se habilita clk para convertidor analog-digital
+  rcc_periph_clock_enable(RCC_ADC1);
+  //  Se habilita en reloj para módulo USART1
+  rcc_periph_clock_enable(RCC_USART1);
+}
+// ADC Setup
+static void adc_setup(void)
+{
+
+  //  Pines de entrada analógica(podría ser batería)
+  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO2);
+  //  Se apaga módulo ADC1
+  adc_power_off(ADC1);
+  adc_disable_scan_mode(ADC1);
+  // Tiempo de muestreo es cada 3 ciclos de reloj
+  adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_3CYC);
+  //  Se enciende modo
+  adc_power_on(ADC1);
+}
+
+static uint16_t read_adc_naiive(uint8_t channel)
+{
+
+  // Array para almacenar información de canal
+  uint8_t channel_array[1];
+  channel_array[0] = channel;
+  // Se inicia secuencia regular con canal especificado
+  adc_set_regular_sequence(ADC1, 1, channel_array);
+  // Conversión
+  adc_start_conversion_regular(ADC1);
+  // Se espera a que conversión termine
+  while (!adc_eoc(ADC1))
+    ;
+  // Lee conversión
+  uint16_t reg16 = adc_read_regular(ADC1);
+  return reg16;
+}
+
+//____________________________________________________
