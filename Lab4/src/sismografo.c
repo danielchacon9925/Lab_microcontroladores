@@ -59,13 +59,23 @@
 #define GYR_CTRL_REG4 0x23
 #define GYR_CTRL_REG4_FS_SHIFT 4
 
+/////////////////////////////////////////////////
+//	Definición de sensibilidad de la pantalla. //
+/////////////////////////////////////////////////
+// Se hace uso de recursos disponibles en repositorio.
+// Configuración de registros de SPI se implementa:
+// 	1.  lcd-serial.c pwd encontrado en libopencm3-examples/examples/stm32/f4/stm32f429i-discovery/lcd-serial
+#define L3GD20_SENSITIVITY_250DPS  (0.00875F)      
+#define L3GD20_SENSITIVITY_500DPS  (0.0175F)       
+#define L3GD20_SENSITIVITY_2000DPS (0.070F) 
+
 // Definición de atributos del objeto
 typedef struct GYRO
 {
   int16_t X;
   int16_t Y;
   int16_t Z;
-} GYRO;
+} gyro;
 
 // Declaración de funciones
 static void usart_setup(void);
@@ -73,19 +83,54 @@ static void spi_setup(void);
 void input_setup(void);
 static void adc_setup(void);
 static uint16_t read_adc_naiive(uint8_t channel);
+gyro GYRO_DATA(void);
 
 /////////
 // Main//
 /////////
-int main(void)
-{
 
-  // Inicialización de funciones
+// Inclusión de bibliotecas y definición de funciones de inicialización
+int main(void){
+
+  // Configuración del reloj, entrada/salida, USART, SPI, ADC, SDRAM y LCD SPI
   input_setup();
-  usart_setup();
+	usart_setup();
   spi_setup();
   adc_setup();
+  sdram_init();
+  lcd_spi_init();
+
+  // Configuración de la consola con una velocidad de baudios de 115200
+  console_setup(115200);
+
+  // Inicialización del sistema de gráficos con una función personalizada para dibujar píxeles
+	gfx_init(lcd_draw_pixel, 240, 320);
+
+  // Declaración de una instancia del giroscopio y cadenas de caracteres para almacenar valores
+  gyro get;
+  char x_eje[10];
+  char y_eje[10];
+  char z_eje[10];
+  char bateria_V_str[10];
+
+  // Variables para la transmisión de datos
+  char msj[35], coma[] = ",";
+
+  // Variable para almacenar el voltaje de la batería
+  float BAT;
+
+  // Bandera para habilitar o deshabilitar la transmisión
+  int TX_EN = 0;
+
+  while (1){
+
+  }
+
+  return 0;
+    
+
 }
+
 
 //////////////
 // Funciones//
@@ -249,47 +294,110 @@ static uint16_t read_adc_naiive(uint8_t channel)
   return reg16;
 }
 
-// Inclusión de bibliotecas y definición de funciones de inicialización
-int main(void){
+// Funcion que lee las coordenadas xyz del giroscopio
+gyro GYRO_DATA(void){
+	gyro get;
+  /////////////////////////////
+  // Identificación de slave //
+  /////////////////////////////
+  // Se limpia registro, inicio de transmisión de datos de registro
+	gpio_clear(GPIOC, GPIO1);
+  //  Señal de identificación de L3GD20 y lectura
+	spi_send(SPI5, GYR_WHO_AM_I | GYR_RNW);
+  //  Lee identificación 
+	spi_read(SPI5);
+  //  Se envía bit de control
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+  //  Se indica que transmisión a slave ha finalizado
+	gpio_set(GPIOC, GPIO1);
 
-    // Configuración de la consola con una velocidad de baudios de 115200
-    configurar_consola(115200);
+  ////////////////
+  // Temperatura//
+  ////////////////
+  // Inicio de transmisión 
+	gpio_clear(GPIOC, GPIO1);
+  //  Señal de control para leer temperatura
+	spi_send(SPI5, GYR_OUT_TEMP | GYR_RNW);
+  //  Se lee dato
+	spi_read(SPI5);
+  //  Se envía bit de control 
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+  //  Se termina transmisión
+	gpio_set(GPIOC, GPIO1);
 
-    // Configuración del reloj, entrada/salida, USART, SPI, ADC, SDRAM y LCD SPI
-    configurar_reloj();
-    configurar_entrada_salida();
-    configurar_comunicacion_serial();
-    configurar_spi();
-    configurar_adc();
-    inicializar_sdram();
-    inicializar_lcd_spi();
+  /////////////////////////
+  // Estado de giroscopio//
+  /////////////////////////
+  // Inicio de transmisión 
+	gpio_clear(GPIOC, GPIO1);
+  //  Señal de control para status de registro 
+	spi_send(SPI5, GYR_STATUS_REG | GYR_RNW);
+  //  Se lee dato en registro
+	spi_read(SPI5);
+  //  Se envía señal de control
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+  //  Transmisión de datos finaliza
+	gpio_set(GPIOC, GPIO1);
 
-    // Inicialización del sistema de gráficos con una función personalizada para dibujar píxeles
-	inicializar_graficos(lcd_draw_pixel, 240, 320);
+  /////////////////////
+  //  Lectura de ejes//
+  /////////////////////
+  // Para la sección siguiente se repite procedimiento de status y temperatura
+  // Se habilita tx, realiza solicutd de lectura de registro, se lee y se termina tx.
 
-    // Declaración de una instancia del giroscopio y cadenas de caracteres para almacenar valores
-    giroscopio instancia_giroscopio;
-    char x_eje[10];
-    char y_eje[10];
-    char z_eje[10];
-    char bateria_V_str[10];
+  // Eje Z//
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Z_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.Z=spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
 
-    // Variables para la transmisión de datos
-    char mensaje[35], coma[] = ",";
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Z_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.Z|=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
 
-    // Variable para almacenar el voltaje de la batería
-    float v_bateria;
+  // Eje Y//
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Y_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.Y =spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
 
-    // Bandera para habilitar o deshabilitar la transmisión
-    int transmision_habilitada = 0;
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_Y_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.Y|=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
 
-    while (1)
-    {
-      /* Por desarrollar lógica del sismógrafo aquí dentro del while */
-    }
+  // Eje X//
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_X_L | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.X = spi_read(SPI5);
+	gpio_set(GPIOC, GPIO1);
 
-    return 0;
-    
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_X_H | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.X |=spi_read(SPI5) << 8;
+	gpio_set(GPIOC, GPIO1);
 
+  //  Se obtiene dato
+	get.X = get.X*L3GD20_SENSITIVITY_500DPS;
+	get.Y = get.Y*L3GD20_SENSITIVITY_500DPS;
+	get.Z = get.Z*L3GD20_SENSITIVITY_500DPS;
+	return get;
 }
+
 //____________________________________________________
