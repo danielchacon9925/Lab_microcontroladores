@@ -265,7 +265,7 @@ int main(void){
     inicializar_lcd_spi();
 
     // Inicialización del sistema de gráficos con una función personalizada para dibujar píxeles
-	inicializar_graficos(funcion_dibujar_pixel, 240, 320);
+	inicializar_graficos(lcd_draw_pixel, 240, 320);
 
     // Declaración de una instancia del giroscopio y cadenas de caracteres para almacenar valores
     giroscopio instancia_giroscopio;
