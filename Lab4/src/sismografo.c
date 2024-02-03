@@ -75,7 +75,7 @@ typedef struct GYRO
   int16_t X;
   int16_t Y;
   int16_t Z;
-} gyro;
+} GYRO;
 
 // Declaración de funciones
 static void usart_setup(void);
@@ -83,7 +83,7 @@ static void spi_setup(void);
 void input_setup(void);
 static void adc_setup(void);
 static uint16_t read_adc_naiive(uint8_t channel);
-gyro GYRO_DATA(void);
+GYRO GYRO_DATA(void);
 
 /////////
 // Main//
@@ -92,7 +92,11 @@ gyro GYRO_DATA(void);
 // Inclusión de bibliotecas y definición de funciones de inicialización
 int main(void){
 
+  // Configuración de la consola con una velocidad de baudios de 115200
+  console_setup(115200);
+
   // Configuración del reloj, entrada/salida, USART, SPI, ADC, SDRAM y LCD SPI
+  clock_setup();  
   input_setup();
 	usart_setup();
   spi_setup();
@@ -100,21 +104,18 @@ int main(void){
   sdram_init();
   lcd_spi_init();
 
-  // Configuración de la consola con una velocidad de baudios de 115200
-  console_setup(115200);
-
   // Inicialización del sistema de gráficos con una función personalizada para dibujar píxeles
 	gfx_init(lcd_draw_pixel, 240, 320);
 
   // Declaración de una instancia del giroscopio y cadenas de caracteres para almacenar valores
-  gyro get;
+  GYRO get;
   char x_eje[10];
   char y_eje[10];
   char z_eje[10];
   char bateria_V_str[10];
 
   // Variables para la transmisión de datos
-  char msj[35], coma[] = ",";
+  char msg[35], comma[] = ",";
 
   // Variable para almacenar el voltaje de la batería
   float BAT;
@@ -124,13 +125,137 @@ int main(void){
 
   while (1){
 
+    // Se lee el puerto PA2 y se calcula el nivel de la tensión de la batería
+		BAT = (float)(read_adc_naiive(2)*9.0)/4095.0;
+
+		// Se pasan las variables a strings utilizando las variable inicializadas
+		sprintf(x_eje, "%d", get.X);
+		sprintf(y_eje, "%d", get.Y);
+		sprintf(z_eje, "%d", get.Z);
+		sprintf(bateria_V_str, "%.2f", BAT);
+
+    // Mostrando información en pantalla
+		gfx_fillScreen(LCD_BLACK); // Fondo color negro
+		gfx_setTextColor(LCD_BLUE, LCD_BLACK); // Letra color azul
+		gfx_setTextSize(2);			
+		gfx_setCursor(-4, 20);
+		gfx_puts("Lab4:Sismografo");
+
+    gfx_drawRect(-7, 75, 235, 210, LCD_BLUE);
+
+		// Informacion de los ejes, color de fondo de las letras se mantiene negro
+		gfx_setTextColor(LCD_WHITE, LCD_BLACK); // Letra color blanco
+		gfx_setCursor(60, 130);
+		gfx_setTextSize(2);
+		gfx_puts("Eje X: ");
+		gfx_setTextColor(LCD_GREEN, LCD_BLACK); // Letra color verde
+		gfx_puts(x_eje);
+		
+		gfx_setTextColor(LCD_WHITE, LCD_BLACK); // Letra color blanco
+		gfx_setCursor(60, 170);
+		gfx_puts("Eje Y: ");
+		gfx_setTextColor(LCD_GREEN, LCD_BLACK); // Letra color verde
+		gfx_puts(y_eje);
+
+		gfx_setTextColor(LCD_WHITE, LCD_BLACK); // Letra color blanco
+		gfx_setCursor(60, 220);
+		gfx_puts("Eje Z: ");
+		gfx_setTextColor(LCD_GREEN, LCD_BLACK); // Letra color verde
+		gfx_puts(z_eje);
+
+		// Informacion de la bateria
+		gfx_setTextColor(LCD_RED, LCD_BLACK); // Letra color blanco
+		gfx_setCursor(-3, 260);
+		gfx_setTextSize(2);
+		gfx_puts("Bateria: ");
+		gfx_setCursor(120, 260);
+		gfx_puts(bateria_V_str);
+		gfx_puts(" V");
+
+    //////////
+    //  TX  //
+    //////////
+		// Informacion de transmisión
+		gfx_setCursor(-3, 90);
+    gfx_setTextSize(2);			
+		gfx_puts("Trasmision: ");
+
+		if (TX_EN){
+			gfx_setCursor(172, 90);
+			gfx_puts("ON");
+		}
+		else{
+			gfx_setCursor(172, 90);
+			gfx_puts("OFF");
+		}
+		lcd_show_frame();
+
+    //////////////////////
+		//  Lectura de GYRO //
+    //////////////////////
+		get = GYRO_DATA();
+		gpio_set(GPIOC, GPIO1);
+
+    /////////////////
+		// Nivel de BAT//
+    /////////////////
+
+		// Tensión en valor máximo: parpadea
+		if (BAT<=7.0)
+		{
+			gpio_toggle(GPIOG, GPIO14); // Blink 
+		}
+		else gpio_clear(GPIOG, GPIO14); //  BAT LED OFF
+    
+    ////////
+		// TX //
+    ////////
+		if (TX_EN)
+		{
+			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
+
+			/* Información que se envía a la consola */
+			strcat(msg, x_eje);
+			strcat(msg, comma);
+		
+			strcat(msg, y_eje);
+			strcat(msg, comma);
+	
+			strcat(msg, z_eje);
+			strcat(msg, comma);
+			
+			strcat(msg, bateria_V_str);
+			console_puts(msg);
+			console_puts("\n");
+			memset(msg, 0, 35);
+		}
+    ////////////////
+		// TX BUTTON  //
+    ////////////////
+		if (gpio_get(GPIOA, GPIO0)) {
+			if(TX_EN){
+				TX_EN = 0;	
+				gpio_clear(GPIOG, GPIO13); //TX LED OFF
+			}
+			else {
+				TX_EN = ~TX_EN;
+			}
+		}
+
+    ////////////
+    //  Delay //
+    ////////////
+    
+		int i;
+		for (i = 0; i < 80000; i++)    /* Waiting. */
+			__asm__("nop");	
   }
 
   return 0;
     
 
 }
-
+//____________________________________________________
 
 //////////////
 // Funciones//
@@ -139,12 +264,6 @@ int main(void){
 // USART Setup
 static void usart_setup(void)
 {
-  /* Configuración de pines para USAR.*/
-  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
-
-  /* Se configura GPP para funciones de USART. */
-  gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
-
   ////////////////////////////
   // Configuración de USART1//
   ////////////////////////////
@@ -162,14 +281,31 @@ static void usart_setup(void)
   usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
   //  Se habilita la USART1
   usart_enable(USART1);
+
+  /* Configuración de pines para USAR.*/
+  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
+
+  /* Se configura GPP para funciones de USART. */
+  gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
+
 }
 
 // SPI Setup
 static void spi_setup(void)
 {
+  //  Habilitación de clk para pin de SPI
+  rcc_periph_clock_enable(RCC_SPI5);
+  //  Habilitación de clk para GPP
+  rcc_periph_clock_enable(RCC_GPIOC);
+  rcc_periph_clock_enable(RCC_GPIOF); 
+
   /////////////////////////////
   //  Configuraciones de GPIO//
   /////////////////////////////
+
+  //  Pin GPIO1 en el puerto GPIOC como una salida en modo push-pull sin PU/PD.
+  gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
+  gpio_set(GPIOC, GPIO1);
 
   //  Configura GPIO7, GPIO8 y GPIO9 en el puerto GPIOF como salidas.
   gpio_mode_setup(GPIOF, GPIO_MODE_AF, GPIO_PUPD_NONE,
@@ -177,15 +313,6 @@ static void spi_setup(void)
   //  Se configuran en su alternate function.
   gpio_set_af(GPIOF, GPIO_AF5, GPIO7 | GPIO8 | GPIO9);
 
-  //  Pin GPIO1 en el puerto GPIOC como una salida en modo push-pull sin PU/PD.
-  gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
-  gpio_set(GPIOC, GPIO1);
-
-  //  Habilitación de clk para pin de SPI
-  rcc_periph_clock_enable(RCC_SPI5);
-  //  Habilitación de clk para GPP
-  rcc_periph_clock_enable(RCC_GPIOC);
-  rcc_periph_clock_enable(RCC_GPIOF);
 
   //////////////////////
   // SPI configuration//
@@ -213,7 +340,7 @@ static void spi_setup(void)
   SPI_I2SCFGR(SPI5) &= ~SPI_I2SCFGR_I2SMOD;
   // Se habilita SPI5 para transmisión y recepción de datos.
   spi_enable(SPI5);
-  //  Limpia señales en GPIO
+  //  Limpia señales en GPIO, habilita TX
   gpio_clear(GPIOC, GPIO1);
   //  Se envía comando para leer registor de control
   spi_send(SPI5, GYR_CTRL_REG1);
@@ -244,6 +371,13 @@ static void spi_setup(void)
 //  Input setup
 void input_setup(void)
 {
+  //  Se habilita clk para convertidor analog-digital
+  rcc_periph_clock_enable(RCC_ADC1);
+  //  Se habilita en reloj para módulo USART1
+  rcc_periph_clock_enable(RCC_USART1);  
+  //  Reloj se habilita para pin GPP digital
+  rcc_periph_clock_enable(RCC_GPIOA);
+  rcc_periph_clock_enable(RCC_GPIOG);
 
   //  Se habilita pin como entrada open drain para conectar varios dispositivos
   gpio_mode_setup(GPIOA, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO0);
@@ -252,19 +386,10 @@ void input_setup(void)
   gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
   gpio_mode_setup(GPIOG, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
 
-  //  Reloj se habilita para pin GPP digital
-  rcc_periph_clock_enable(RCC_GPIOA);
-  rcc_periph_clock_enable(RCC_GPIOG);
-
-  //  Se habilita clk para convertidor analog-digital
-  rcc_periph_clock_enable(RCC_ADC1);
-  //  Se habilita en reloj para módulo USART1
-  rcc_periph_clock_enable(RCC_USART1);
 }
 // ADC Setup
 static void adc_setup(void)
 {
-
   //  Pines de entrada analógica(podría ser batería)
   gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO2);
   //  Se apaga módulo ADC1
@@ -295,8 +420,8 @@ static uint16_t read_adc_naiive(uint8_t channel)
 }
 
 // Funcion que lee las coordenadas xyz del giroscopio
-gyro GYRO_DATA(void){
-	gyro get;
+GYRO GYRO_DATA(void){
+	GYRO get;
   /////////////////////////////
   // Identificación de slave //
   /////////////////////////////
@@ -312,21 +437,6 @@ gyro GYRO_DATA(void){
   //  Se indica que transmisión a slave ha finalizado
 	gpio_set(GPIOC, GPIO1);
 
-  ////////////////
-  // Temperatura//
-  ////////////////
-  // Inicio de transmisión 
-	gpio_clear(GPIOC, GPIO1);
-  //  Señal de control para leer temperatura
-	spi_send(SPI5, GYR_OUT_TEMP | GYR_RNW);
-  //  Se lee dato
-	spi_read(SPI5);
-  //  Se envía bit de control 
-	spi_send(SPI5, 0);
-	spi_read(SPI5);
-  //  Se termina transmisión
-	gpio_set(GPIOC, GPIO1);
-
   /////////////////////////
   // Estado de giroscopio//
   /////////////////////////
@@ -340,6 +450,21 @@ gyro GYRO_DATA(void){
 	spi_send(SPI5, 0);
 	spi_read(SPI5);
   //  Transmisión de datos finaliza
+	gpio_set(GPIOC, GPIO1);
+
+  ////////////////
+  // Temperatura//
+  ////////////////
+  // Inicio de transmisión 
+	gpio_clear(GPIOC, GPIO1);
+  //  Señal de control para leer temperatura
+	spi_send(SPI5, GYR_OUT_TEMP | GYR_RNW);
+  //  Se lee dato
+	spi_read(SPI5);
+  //  Se envía bit de control 
+	spi_send(SPI5, 0);
+	spi_read(SPI5);
+  //  Se termina transmisión
 	gpio_set(GPIOC, GPIO1);
 
   /////////////////////
@@ -399,5 +524,4 @@ gyro GYRO_DATA(void){
 	get.Z = get.Z*L3GD20_SENSITIVITY_500DPS;
 	return get;
 }
-
 //____________________________________________________
