@@ -38,7 +38,7 @@ client.on_publish = on_publish
 broker_address = "iot.eie.ucr.ac.cr"
 port = 1883
 token = "aknw9qgidmkg8t5radyi"  
-username = "labo4divicestm32"
+username = "Lab_04_B72018_B87388"
 
 # Conexión al broker MQTT
 client.username_pw_set(token)
@@ -74,6 +74,7 @@ while client.connected != True:
     
         # Publicación del mensaje en el topic del dashboard
         topic = "v1/devices/me/telemetry"
+        print(payload) 
         client.publish(topic, payload)
     
         # Espera antes de enviar el siguiente mensaje
