@@ -3,6 +3,7 @@ import json
 import time
 import random
 import requests
+import serial
 
 
 
@@ -13,12 +14,22 @@ def on_connect(client, userdata, flags, rc):
     else:
         print("No se pudo establecer la conexión. Código de retorno:", rc)
 
+def on_disconnect(client, userdata, flags, rc):
+    if(rc == 0):
+        print("Desconexión exitosa")
+    else:
+        print("Sistema desconectado mediante el código: ", rc)
+
 # Callback para manejar la publicación de mensajes
 def on_publish(client, userdata, mid):
     print("Mensaje publicado en el topic")
 
+ser = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
+print("Conectado al puerto serial /dev/ttyACM0")
+
 # Configuración del cliente MQTT
 client = mqtt.Client("microcontrolador")
+client.connected = False
 client.on_connect = on_connect
 client.on_publish = on_publish
 
@@ -31,31 +42,34 @@ token = "aknw9qgidmkg8t5radyi"
 client.username_pw_set(token)
 client.connect(broker_address, port)
 
+# Estructura json
+dictionary = dict()
+
+#Rutina de dormir
+while client.connected != True:
+    client.loop()
+    time.sleep(2)
+
 # Bucle principal
 try:
     while True:
         # Lectura de datos del microcontrolador
-        temperature = round(random.uniform(1, 50), 4)
-        battery_data = round(random.uniform(1, 9), 4)
-        Eje_X = random.uniform(-100, 100)
-        Eje_Y = random.uniform(-100, 100)
-        Eje_Z = random.uniform(-100, 100)
-    
-        if battery_data < 7:
-            battery_level = "Batería Baja"
-    
-        else:
-            battery_level = "Batería Alta"
+        # Error estas lineas
+        data = ser.readline().decode('utf-8')
+        data = data.replace('\r', "").replace('\n', "")
+        data = data.split(',')
+
+        if (len(data) == 4):
+            dictionary["Eje X"] = data[0]
+            dictionary["Eje Y"] = data[1]
+            dictionary["Eje Z"] = data[2]
+            dictionary["Tension de Bateria"] = data[3]
+
+            if(float(data[3]) < 7):
+                dictionary["Bateria Baja"] = "Si"
+            else:
+                dictionary["Bateria Baja"] = "No"
         
-        # Construcción del mensaje JSON
-        data = {
-            "Eje X": Eje_X,
-            "Eje Y": Eje_Y,
-            "Eje Z": Eje_Z,
-            "Batería": battery_data,
-            "Nivel de batería": battery_level,
-            "Temperatura": temperature,
-        }
         payload = json.dumps(data)
     
         # Publicación del mensaje en el topic del dashboard
