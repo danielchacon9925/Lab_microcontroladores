@@ -14,7 +14,7 @@ def on_connect(client, userdata, flags, rc):
     else:
         print("No se pudo establecer la conexión. Código de retorno:", rc)
 
-def on_disconnect(client, userdata, flags, rc):
+def on_disconnect(client, userdata, rc):
     if(rc == 0):
         print("Desconexión exitosa")
     else:
