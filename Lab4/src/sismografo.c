@@ -75,6 +75,7 @@ typedef struct GYRO
   int16_t X;
   int16_t Y;
   int16_t Z;
+  int16_t Temp;
 } GYRO;
 
 // Declaración de funciones
@@ -112,10 +113,12 @@ int main(void){
   char x_eje[10];
   char y_eje[10];
   char z_eje[10];
-  char bateria_V_str[10];
+  char temperature[10];
+
+  char BAT_LVL[10];
 
   // Variables para la transmisión de datos
-  char msg[35], comma[] = ",";
+  char mensaje[35], comma[] = ",";
 
   // Variable para almacenar el voltaje de la batería
   float BAT;
@@ -126,22 +129,24 @@ int main(void){
   while (1){
 
     // Se lee el puerto PA2 y se calcula el nivel de la tensión de la batería
-		BAT = (float)(read_adc_naiive(2)*9.0)/4095.0;
+		BAT = (float)((read_adc_naiive(3)*9)/4095.0)*100;
 
 		// Se pasan las variables a strings utilizando las variable inicializadas
-		sprintf(x_eje, "%d", get.X);
+		sprintf(x_eje, "%d", (get.X-2));
 		sprintf(y_eje, "%d", get.Y);
 		sprintf(z_eje, "%d", get.Z);
-		sprintf(bateria_V_str, "%.2f", BAT);
+        int intTemperature = (get.Temp-32)*5/9;
+        sprintf(temperature, "%d", intTemperature);
+		sprintf(BAT_LVL, "%.2f", BAT);
 
     // Mostrando información en pantalla
 		gfx_fillScreen(LCD_BLACK); // Fondo color negro
-		gfx_setTextColor(LCD_BLUE, LCD_BLACK); // Letra color azul
+		gfx_setTextColor(LCD_WHITE, LCD_BLACK); // Letra color azul
 		gfx_setTextSize(2);			
 		gfx_setCursor(-4, 20);
 		gfx_puts("Lab4:Sismografo");
 
-    gfx_drawRect(-7, 75, 235, 210, LCD_BLUE);
+        gfx_drawRect(-7, 75, 270, 240, LCD_BLUE);
 
 		// Informacion de los ejes, color de fondo de las letras se mantiene negro
 		gfx_setTextColor(LCD_WHITE, LCD_BLACK); // Letra color blanco
@@ -169,15 +174,24 @@ int main(void){
 		gfx_setTextSize(2);
 		gfx_puts("Bateria: ");
 		gfx_setCursor(120, 260);
-		gfx_puts(bateria_V_str);
+		gfx_puts(BAT_LVL);
 		gfx_puts(" V");
 
-    //////////
-    //  TX  //
-    //////////
+		// Informacion de temperatia
+		gfx_setTextColor(LCD_RED, LCD_BLACK); // Letra color blanco
+		gfx_setCursor(-3, 290);
+		gfx_setTextSize(2);
+		gfx_puts("Temp: ");
+		gfx_setCursor(120, 290);
+		gfx_puts(temperature);
+		gfx_puts(" C");
+
+        //////////
+        //  TX  //
+        //////////
 		// Informacion de transmisión
 		gfx_setCursor(-3, 90);
-    gfx_setTextSize(2);			
+        gfx_setTextSize(2);			
 		gfx_puts("Trasmision: ");
 
 		if (TX_EN){
@@ -190,15 +204,15 @@ int main(void){
 		}
 		lcd_show_frame();
 
-    //////////////////////
+        //////////////////////
 		//  Lectura de GYRO //
-    //////////////////////
+        //////////////////////
 		get = GYRO_DATA();
 		gpio_set(GPIOC, GPIO1);
 
-    /////////////////
+        /////////////////
 		// Nivel de BAT//
-    /////////////////
+        /////////////////
 
 		// Tensión en valor máximo: parpadea
 		if (BAT<=7.0)
@@ -207,31 +221,31 @@ int main(void){
 		}
 		else gpio_clear(GPIOG, GPIO14); //  BAT LED OFF
     
-    ////////
+        ////////
 		// TX //
-    ////////
+        ////////
 		if (TX_EN)
 		{
 			gpio_toggle(GPIOG, GPIO13); // Blink en el LED de transmisión
 
 			/* Información que se envía a la consola */
-			strcat(msg, x_eje);
-			strcat(msg, comma);
+			strcat(mensaje, x_eje);
+			strcat(mensaje, comma);
 		
-			strcat(msg, y_eje);
-			strcat(msg, comma);
+			strcat(mensaje, y_eje);
+			strcat(mensaje, comma);
 	
-			strcat(msg, z_eje);
-			strcat(msg, comma);
+			strcat(mensaje, z_eje);
+			strcat(mensaje, comma);
 			
-			strcat(msg, bateria_V_str);
-			console_puts(msg);
+			strcat(mensaje, BAT_LVL);
+			console_puts(mensaje);
 			console_puts("\n");
-			memset(msg, 0, 35);
+			memset(mensaje, 0, 35);
 		}
-    ////////////////
+        ////////////////
 		// TX BUTTON  //
-    ////////////////
+        ////////////////
 		if (gpio_get(GPIOA, GPIO0)) {
 			if(TX_EN){
 				TX_EN = 0;	
@@ -242,9 +256,9 @@ int main(void){
 			}
 		}
 
-    ////////////
-    //  Delay //
-    ////////////
+        ////////////
+        //  Delay //
+        ////////////
     
 		int i;
 		for (i = 0; i < 80000; i++)    /* Waiting. */
@@ -463,8 +477,15 @@ GYRO GYRO_DATA(void){
 	spi_read(SPI5);
   //  Se envía bit de control 
 	spi_send(SPI5, 0);
-	spi_read(SPI5);
+	get.Temp =spi_read(SPI5);
   //  Se termina transmisión
+	gpio_set(GPIOC, GPIO1);
+
+	gpio_clear(GPIOC, GPIO1);
+	spi_send(SPI5, GYR_OUT_TEMP | GYR_RNW);
+	spi_read(SPI5);
+	spi_send(SPI5, 0);
+	get.Temp |=spi_read(SPI5) << 8;
 	gpio_set(GPIOC, GPIO1);
 
   /////////////////////
@@ -472,7 +493,7 @@ GYRO GYRO_DATA(void){
   /////////////////////
   // Para la sección siguiente se repite procedimiento de status y temperatura
   // Se habilita tx, realiza solicutd de lectura de registro, se lee y se termina tx.
-
+  
   // Eje Z//
 	gpio_clear(GPIOC, GPIO1);
 	spi_send(SPI5, GYR_OUT_Z_L | GYR_RNW);
@@ -522,6 +543,7 @@ GYRO GYRO_DATA(void){
 	get.X = get.X*L3GD20_SENSITIVITY_500DPS;
 	get.Y = get.Y*L3GD20_SENSITIVITY_500DPS;
 	get.Z = get.Z*L3GD20_SENSITIVITY_500DPS;
+  get.Temp = (get.Temp*L3GD20_SENSITIVITY_500DPS);
 	return get;
 }
 //____________________________________________________
