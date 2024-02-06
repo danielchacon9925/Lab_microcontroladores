@@ -1,6 +1,6 @@
 # Laboratorio 4: Daniel Chacón Mora (B72018) - Erick Sancho (B87388)
 
-import time
+import time, json
 import requests
 import random
 import serial
@@ -13,8 +13,8 @@ url = f'https://iot.eie.ucr.ac.cr/api/v1/{access_token}/telemetry'
 # URL del servidor ThingsBoard (ajusta la URL y el token de acceso)
 thingsboard_url = "https://iot.eie.ucr.ac.cr"
 
-puerto_serial = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
-print("Conexión al puerto serial.")
+#puerto_serial = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
+#print("Conexión al puerto serial.")
 
 # Función para enviar los datos al dashboard
 def send_data_to_thingsboard(data):
@@ -42,10 +42,14 @@ try:
         battery_value = battery_data.get("Batería")
 
         if battery_value < 7:
-            print("Batería Baja")
+            battery_level = {"Nivel batería": "Batería Baja"}
+
+        else:
+            battery_level = {"Nivel batería": "Batería Alta"}
+
 
         # Combinar datos en un solo diccionario
-        combined_data = {**gyro_data, **battery_data, **temperature}
+        combined_data = {**gyro_data, **battery_data, **temperature, **battery_level}
 
         # Enviar los datos a ThingsBoard
         send_data_to_thingsboard(combined_data)
