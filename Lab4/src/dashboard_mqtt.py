@@ -22,7 +22,7 @@ def on_disconnect(client, userdata, flags, rc):
 
 # Callback para manejar la publicación de mensajes
 def on_publish(client, userdata, mid):
-    print("Mensaje publicado en el topic")
+    print("Mensaje publicado en el topic", mid)
 
 ser = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)
 print("Conectado al puerto serial /dev/ttyACM0")
@@ -31,12 +31,14 @@ print("Conectado al puerto serial /dev/ttyACM0")
 client = mqtt.Client("microcontrolador")
 client.connected = False
 client.on_connect = on_connect
+client.on_disconnect = on_disconnect
 client.on_publish = on_publish
 
 # Configuración del broker y token de autenticación
 broker_address = "iot.eie.ucr.ac.cr"
 port = 1883
 token = "aknw9qgidmkg8t5radyi"  
+username = "labo4divicestm32"
 
 # Conexión al broker MQTT
 client.username_pw_set(token)
@@ -51,14 +53,12 @@ while client.connected != True:
     time.sleep(2)
 
 # Bucle principal
-try:
-    while True:
+    while 1:
         # Lectura de datos del microcontrolador
         # Error estas lineas
         data = ser.readline().decode('utf-8')
         data = data.replace('\r', "").replace('\n', "")
         data = data.split(',')
-
         if (len(data) == 4):
             dictionary["Eje X"] = data[0]
             dictionary["Eje Y"] = data[1]
@@ -70,7 +70,7 @@ try:
             else:
                 dictionary["Bateria Baja"] = "No"
         
-        payload = json.dumps(data)
+        payload = json.dumps(dictionary)
     
         # Publicación del mensaje en el topic del dashboard
         topic = "v1/devices/me/telemetry"
@@ -79,5 +79,3 @@ try:
         # Espera antes de enviar el siguiente mensaje
         time.sleep(1)  # Envía datos cada 1 segundo
 
-except KeyboardInterrupt:
-    print("Conexión al dashboard finalizada.")
