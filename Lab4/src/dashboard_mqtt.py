@@ -53,30 +53,30 @@ while client.connected != True:
     time.sleep(2)
 
 # Bucle principal
-while 1:                            
-    # Lectura de datos del microcontrolador
-    # Error estas lineas
-    data = ser.readline().decode('utf-8')
-    data = data.replace('\r', "").replace('\n', "")
-    data = data.split(',')
-    if (len(data) == 4):
-        dictionary["Eje X"] = data[0]
-        dictionary["Eje Y"] = data[1]
-        dictionary["Eje Z"] = data[2]
-        dictionary["Tension de Bateria"] = data[3]
+    while 1:
+        # Lectura de datos del microcontrolador
+        # Error estas lineas
+        data = ser.readline().decode('utf-8')
+        data = data.replace('\r', "").replace('\n', "")
+        data = data.split(',')
+        if (len(data) == 4):
+            dictionary["Eje X"] = data[0]
+            dictionary["Eje Y"] = data[1]
+            dictionary["Eje Z"] = data[2]
+            dictionary["Bateria"] = data[3]
 
-        if(float(data[3]) < 7):
-            dictionary["Bateria Baja"] = "Si"
-        else:
-            dictionary["Bateria Baja"] = "No"
+            if (float(data[3]) < 7):
+                dictionary["Nivel de bateria"] = "Bateria baja"
+            else:
+                dictionary["Nivel de bateria"] = "Bateria alta"
+            
+        payload = json.dumps(dictionary)
         
-    payload = json.dumps(dictionary)
-    
         # Publicación del mensaje en el topic del dashboard
-    topic = "v1/devices/me/telemetry"
-    print(payload) 
-    client.publish(topic, payload)
-    
-    # Espera antes de enviar el siguiente mensaje
-    time.sleep(1)  # Envía datos cada 1 segundo
+        topic = "v1/devices/me/telemetry"
+        print(payload) 
+        client.publish(topic, payload)
+        
+        # Espera antes de enviar el siguiente mensaje
+        time.sleep(1)  # Envía datos cada 1 segundo
 
