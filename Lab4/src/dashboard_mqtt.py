@@ -20,7 +20,7 @@ def on_disconnect(client, userdata, rc):
 
 # Callback para manejar la publicación de mensajes
 def on_publish(client, userdata, mid):
-    print("Mensaje publicado en el topic", mid)  # Mensaje de publicación exitosa
+    print("Mensaje publicado en el dashboard", mid)  # Mensaje de publicación exitosa
 
 ser = serial.Serial("/dev/ttyACM0", 115200, timeout = 1)  # Inicialización del objeto Serial para comunicación serial
 print("Conectado al puerto serial /dev/ttyACM0")  # Mensaje de conexión exitosa al puerto serial
@@ -74,4 +74,3 @@ while client.connected != True:
         client.publish(topic, payload)  # Publicación del mensaje en el broker MQTT
         # Espera antes de enviar el siguiente mensaje
         time.sleep(1)  # Envío de datos cada 1 segundo
- 
