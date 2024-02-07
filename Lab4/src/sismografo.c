@@ -439,7 +439,7 @@ GYRO GYRO_DATA(void){
   /////////////////////////////
   // Identificación de slave //
   /////////////////////////////
-  // Se limpia registro, inicio de transmisión de datos de registro
+  // Se pone pin CS en bajo, inicio de transmisión de datos de registro
 	gpio_clear(GPIOC, GPIO1);
   //  Señal de identificación de L3GD20 y lectura
 	spi_send(SPI5, GYR_WHO_AM_I | GYR_RNW);
@@ -448,7 +448,7 @@ GYRO GYRO_DATA(void){
   //  Se envía bit de control
 	spi_send(SPI5, 0);
 	spi_read(SPI5);
-  //  Se indica que transmisión a slave ha finalizado
+  //  Se indica que transmisión a slave ha finalizado, pin CS en alto
 	gpio_set(GPIOC, GPIO1);
 
   /////////////////////////

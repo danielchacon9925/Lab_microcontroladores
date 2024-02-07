@@ -47,30 +47,31 @@ dictionary = dict()  # Creación de un diccionario para almacenar los datos
 
 # Rutina de dormir
 # while client.connected != True:
-while not client.connected:
+while client.connected != True:
     # Espera hasta que el cliente se conecte
     client.loop()  # Manejo de eventos MQTT
     time.sleep(2)  # Espera de 2 segundos
 
 # Bucle principal
-while 1:
-    # Lectura de datos del microcontrolador
-    data = ser.readline().decode('utf-8')  # Lectura de datos desde el puerto serial y decodificación a cadena UTF-8
-    data = data.replace('\r', "").replace('\n', "")  # Eliminación de caracteres de retorno de carro y nueva línea
-    data = data.split(',')  # Separación de la cadena en una lista utilizando la coma como delimitador
-    if (len(data) == 4):  # Verificación de que se hayan recibido los 4 valores esperados
-        dictionary["Eje X"] = data[0]  # Asignación del valor del eje X al diccionario
-        dictionary["Eje Y"] = data[1]  # Asignación del valor del eje Y al diccionario
-        dictionary["Eje Z"] = data[2]  # Asignación del valor del eje Z al diccionario
-        dictionary["Bateria"] = data[3]  # Asignación del valor de la batería al diccionario
-        if (float(data[3]) < 7):  # Comprobación del nivel de la batería
-            dictionary["Nivel de bateria"] = "Bateria baja"  # Establecimiento del nivel de la batería como bajo
-        else:
-            dictionary["Nivel de bateria"] = "Bateria alta"  # Establecimiento del nivel de la batería como alto
-    payload = json.dumps(dictionary)  # Conversión del diccionario a una cadena JSON
-    # Publicación del mensaje en el topic del dashboard
-    topic = "v1/devices/me/telemetry"  # Topic del dashboard
-    print(payload)  # Impresión del mensaje JSON en consola
-    client.publish(topic, payload)  # Publicación del mensaje en el broker MQTT
-    # Espera antes de enviar el siguiente mensaje
-    time.sleep(1)  # Envío de datos cada 1 segundo
+    while 1:
+        # Lectura de datos del microcontrolador
+        data = ser.readline().decode('utf-8')  # Lectura de datos desde el puerto serial y decodificación a cadena UTF-8
+        data = data.replace('\r', "").replace('\n', "")  # Eliminación de caracteres de retorno de carro y nueva línea
+        data = data.split(',')  # Separación de la cadena en una lista utilizando la coma como delimitador
+        if (len(data) == 4):  # Verificación de que se hayan recibido los 4 valores esperados
+            dictionary["Eje X"] = data[0]  # Asignación del valor del eje X al diccionario
+            dictionary["Eje Y"] = data[1]  # Asignación del valor del eje Y al diccionario
+            dictionary["Eje Z"] = data[2]  # Asignación del valor del eje Z al diccionario
+            dictionary["Bateria"] = data[3]  # Asignación del valor de la batería al diccionario
+            if (float(data[3]) < 7):  # Comprobación del nivel de la batería
+                dictionary["Nivel de bateria"] = "Bateria baja"  # Establecimiento del nivel de la batería como bajo
+            else:
+                dictionary["Nivel de bateria"] = "Bateria alta"  # Establecimiento del nivel de la batería como alto
+        payload = json.dumps(dictionary)  # Conversión del diccionario a una cadena JSON
+        # Publicación del mensaje en el topic del dashboard
+        topic = "v1/devices/me/telemetry"  # Topic del dashboard
+        print(payload)  # Impresión del mensaje JSON en consola
+        client.publish(topic, payload)  # Publicación del mensaje en el broker MQTT
+        # Espera antes de enviar el siguiente mensaje
+        time.sleep(1)  # Envío de datos cada 1 segundo
+ 
