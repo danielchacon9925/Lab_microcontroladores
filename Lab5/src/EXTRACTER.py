@@ -3,15 +3,24 @@ from datetime import datetime
 import csv
 
 # Open a csv file and set it up to receive comma-delimited input
-logging = open('punch.csv', mode='a', newline='')
+
+############
+# punch.csv#
+############
+# logging = open('punch.csv', mode='a', newline='')
+#########
+# up.csv#
+#########
+#logging = open('up.csv', mode='a', newline='')
+###########
+# down.csv#
+###########
+logging = open('down.csv', mode='a', newline='')
 writer = csv.writer(logging, delimiter=",", escapechar=' ', quoting=csv.QUOTE_NONE)
 
 # Open a serial port that is connected to an Arduino
 ser = serial.Serial('/dev/ttyACM0')
 ser.flushInput()
-
-# Manually write the CSV header without the timestamp
-writer.writerow(["Data"])
 
 # Write out a single character encoded in utf-8
 ser.write(bytes('x', 'utf-8'))
