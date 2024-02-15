@@ -10,13 +10,17 @@
 // Definición de pin de MQ2
 #define sensorPin 0 //D3-Naranja
 
+// Definición de pin para ADC
+#define analogPin A0 /* ESP8266 Analog Pin ADC0 = A0 */
+
+
 // WiFi
 const char *ssid =  "REX2.4";    // replace with your wifi ssid and wpa2 key
 const char *pass =  "Daniel0625";//WiFi Password 
 // Buzzer
 const unsigned char buzzer= 14; //D5-VERDE KK
 // Ventilador
-int MOTOR= 12; //D5-VERDE KK
+//int MOTOR= 12; //D5-VERDE KK
 // Gas
 int lpg;
 int lpgA;
@@ -25,6 +29,11 @@ float TEMP;
 float HUM;
 float PRESS;
 float ALT;
+// Lectura de ADC
+int adcValue = 0;  /* Variable to store Output of ADC */
+float BAT;  /* Variable to store Output of ADC */
+
+
 
 
 // BMP280
@@ -37,7 +46,7 @@ void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);  // Initialize the LED_BUILTIN pin as an output
   pinMode(buzzer, OUTPUT);
-  pinMode(MOTOR, OUTPUT);
+  ///pinMode(MOTOR, OUTPUT);
 
 
   Serial.begin(9600);
@@ -93,6 +102,12 @@ void loop()
   digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
   delay(2000);  
 
+  adcValue = analogRead(analogPin); /* Read the Analog Input value */
+  BAT=(((float)adcValue/920)*100);
+  Serial.print("Bateria = ");
+  Serial.print(BAT);
+  Serial.println("%");
+
   Serial.print("Temperature = ");
   TEMP=bme.readTemperature();
   Serial.print(TEMP);
@@ -120,14 +135,14 @@ void loop()
   {
   Serial.println("Smoke: Detected!");
   // Se enciende motor
-  digitalWrite(MOTOR, HIGH);
+  //digitalWrite(MOTOR, HIGH);
   tone(buzzer, 1000); // Enviar señal de sonido a 1KHz
   delay(1000);        // Durante 1 segundo
   noTone(buzzer);     // Detener el sonido
   delay(1000);        // Esperar 1 segundo             
   }
   // Motor apagado
-  digitalWrite(MOTOR, LOW);
+  //digitalWrite(MOTOR, LOW);
   // Crear el payload JSON con todas las variables
   String payload = "{";
   payload += "\"lpg\":"; payload += !lpg;
@@ -135,6 +150,7 @@ void loop()
   payload += ",\"pressure\":"; payload += PRESS;
   payload += ",\"altitude\":"; payload += ALT;
   payload += ",\"humidity\":"; payload += HUM;
+  payload += ",\"BAT\":"; payload += BAT;
   payload += "}";
   Serial.println(payload);
 
