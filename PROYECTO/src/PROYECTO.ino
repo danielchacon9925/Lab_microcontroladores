@@ -15,8 +15,12 @@
 
 
 // WiFi
-const char *ssid =  "REX2.4";    // replace with your wifi ssid and wpa2 key
-const char *pass =  "Daniel0625";//WiFi Password 
+// Casa
+//const char *ssid =  "REX2.4";    // replace with your wifi ssid and wpa2 key
+//const char *pass =  "Daniel0625";//WiFi Password 
+// Teléfono
+const char *ssid =  "Daniel's Galaxy Note20 Ultra";    // replace with your wifi ssid and wpa2 key
+const char *pass =  "19990625";//WiFi Password 
 // Buzzer
 const unsigned char buzzer= 14; //D5-VERDE KK
 // Ventilador
