@@ -13,6 +13,10 @@
 // Definición de pin para ADC
 #define analogPin A0 /* ESP8266 Analog Pin ADC0 = A0 */
 
+/////////////////// DEFINICIÓN PINES DE LOS LEDS ////////////////////
+#define LED_RED  10 // LED ROJO
+#define LED_BLUE 9 // LED AZUL
+
 
 // WiFi
 // Casa
@@ -23,6 +27,7 @@ const char *ssid =  "Daniel's Galaxy Note20 Ultra";    // replace with your wifi
 const char *pass =  "19990625";//WiFi Password 
 // Buzzer
 const unsigned char buzzer= 14; //D5-VERDE KK
+
 // Ventilador
 //int MOTOR= 12; //D5-VERDE KK
 // Gas
@@ -50,8 +55,9 @@ void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);  // Initialize the LED_BUILTIN pin as an output
   pinMode(buzzer, OUTPUT);
+  pinMode(LED_RED, OUTPUT);
+  pinMode(LED_BLUE, OUTPUT);
   ///pinMode(MOTOR, OUTPUT);
-
 
   Serial.begin(9600);
   delay(10);
@@ -135,9 +141,15 @@ void loop()
   Serial.println();
   delay(1000);
 
+  // Encender el LED rojo si la batería está baja
+  if (BAT < 20) { // Valor menor a 20
+      digitalWrite(LED_RED, HIGH); // Encender el LED rojo
+  }
+  
   if (lpg == 0)
   {
   Serial.println("Smoke: Detected!");
+  digitalWrite(LED_BLUE, HIGH); // Encender el LED AZUL cuando se detecte humo
   // Se enciende motor
   //digitalWrite(MOTOR, HIGH);
   tone(buzzer, 1000); // Enviar señal de sonido a 1KHz
@@ -161,4 +173,9 @@ void loop()
   // Publicar el payload en ThingsBoard
   if(pubsub_client.publish("v1/devices/me/telemetry", payload.c_str())) 
     Serial.println("Published");  
+
+  else {
+      digitalWrite(LED_BLUE, LOW); // Apagar el LED AZUL si no se ha detectado humo
+      digitalWrite(LED_RED, LOW); // Apagar el LED ROJO si la batería no está baja
+  }
 }
