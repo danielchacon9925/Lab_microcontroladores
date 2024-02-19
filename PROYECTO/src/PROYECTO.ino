@@ -54,8 +54,8 @@ void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);  // Initialize the LED_BUILTIN pin as an output
   pinMode(buzzer, OUTPUT);
-  pinMode(LED_RED, OUTPUT);
-  pinMode(LED_BLUE, OUTPUT);
+  pinMode(LED_RED, OUTPUT); // Configuración LED rojo como salida
+  pinMode(LED_BLUE, OUTPUT); // Configuración LED azul como salida
   ///pinMode(MOTOR, OUTPUT);
 
   Serial.begin(9600);
@@ -142,7 +142,7 @@ void loop()
 
   // Encender el LED rojo si la batería está baja
   if (BAT < 20) { // Valor menor a 20
-      digitalWrite(LED_RED, HIGH); // Encender el LED rojo
+    digitalWrite(LED_RED, HIGH); // Encender el LED rojo
   }
   
   if (lpg == 0)
@@ -174,7 +174,7 @@ void loop()
     Serial.println("Published");  
 
   else {
-      digitalWrite(LED_BLUE, LOW); // Apagar el LED AZUL si no se ha detectado humo
-      digitalWrite(LED_RED, LOW); // Apagar el LED ROJO si la batería no está baja
+    digitalWrite(LED_BLUE, LOW); // Apagar el LED AZUL si no se ha detectado humo
+    digitalWrite(LED_RED, LOW); // Apagar el LED ROJO si la batería no está baja
   }
 }
