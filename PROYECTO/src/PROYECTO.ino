@@ -14,9 +14,8 @@
 #define analogPin A0 /* ESP8266 Analog Pin ADC0 = A0 */
 
 /////////////////// DEFINICIÓN PINES DE LOS LEDS ////////////////////
-#define LED_RED  10 // LED ROJO
 #define LED_BLUE 9 // LED AZUL
-
+#define LED_RED  10 // LED ROJO
 
 // WiFi
 // Casa
