@@ -14,8 +14,8 @@
 #define analogPin A0 /* ESP8266 Analog Pin ADC0 = A0 */
 
 /////////////////// DEFINICIÓN PINES DE LOS LEDS ////////////////////
-#define LED_BLUE 9 // LED AZUL
-#define LED_RED  10 // LED ROJO
+#define LED_BLUE 12 // LED AZUL
+#define LED_RED  13 // LED ROJO
 
 // WiFi
 // Casa
@@ -142,6 +142,8 @@ void loop()
   // Encender el LED rojo si la batería está baja
   if (BAT < 20) { // Valor menor a 20
     digitalWrite(LED_RED, HIGH); // Encender el LED rojo
+    delay(2000); // Esperar 1 segundo
+    digitalWrite(LED_RED, LOW); // Encender el LED rojo
   }
   
   if (lpg == 0)
@@ -152,7 +154,8 @@ void loop()
   tone(buzzer, 1000); // Emitir sonido de alarma
   delay(1000);        // Durante 1 segundo
   noTone(buzzer);     // Detener el sonido
-  delay(1000);        // Esperar 1 segundo             
+  delay(1000);        // Esperar 1 segundo    
+  digitalWrite(LED_BLUE, LOW); // Encender el LED AZUL cuando se detecte humo
   }
 
   // Crear el payload JSON con todas las variables y publicarlo en ThingsBoard
@@ -169,10 +172,4 @@ void loop()
   // Publicar el payload en ThingsBoard
   if(pubsub_client.publish("v1/devices/me/telemetry", payload.c_str())) 
     Serial.println("Published");  
-
-  // Estado de reposo cuando no se detecta humo ni la batería está baja
-  else {
-    digitalWrite(LED_BLUE, LOW); // Apagar el LED AZUL si no se ha detectado humo
-    digitalWrite(LED_RED, LOW); // Apagar el LED ROJO si la batería no está baja
-  }
 }
